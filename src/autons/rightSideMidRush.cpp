@@ -24,8 +24,7 @@ pros::Task sortingTask(sortingControlTask);
 
 //load for Alliance Stake
 
-moveDualFront(293, 171, true, true, true, 80, 1000);
-setAutonState(7);
+
 pros::delay(100000);
 setAutonState(1);
 
@@ -109,11 +108,13 @@ chassis.turnToHeading(-325, 400);
     intake.move(127);
     mogo.set_value(false);
 
-    chassis.turnToHeading(235, 600);
+    chassis.turnToHeading(235, 650);
     currentArmState = 1; 
     loadActivated   = true; 
     targetArmState  = LoadStates[1]; 
-   
+    setAutonState(7);
+    moveDualFront(285, 168, true, true, true, 80, 1000);
+    
 
     
 //     mogoChassis.turnToHeading(70, 750);
