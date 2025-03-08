@@ -99,12 +99,12 @@ chassis.turnToHeading(-324, 400);
   
 //    intakeLift.set_value(false);
 //    pros::delay(100);
-intake.move(0);
- chassis.moveToPoint(-51,7, 1200, {.minSpeed = 90});
+
+ chassis.moveToPoint(-51,7, 1200, {.minSpeed = 80});
  chassis.waitUntil(5);
  intake.move(127);
  chassis.waitUntilDone();
- chassis.moveToPoint(-49, 2, 500, {.forwards = false, .maxSpeed = 90, .minSpeed =80});
+ chassis.moveToPoint(-49, 3.5, 500, {.forwards = false, .maxSpeed = 60, .minSpeed =30});
  chassis.waitUntilDone();
  intakeLift.set_value(true);
  pros::delay(200);
