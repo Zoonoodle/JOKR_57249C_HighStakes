@@ -5,6 +5,7 @@
 #include "bennyHeaders/DistanceSensorMovements.hpp"
 #include "lemlib/chassis/chassis.hpp"
 #include "pros/abstract_motor.hpp"
+#include "pros/llemu.hpp"
 #include "pros/misc.h"
 #include "pros/motors.h"
 #include "pros/rtos.hpp"
@@ -41,6 +42,7 @@ void initialize() {
     pros::Task autoWsTask([] {
         while (true) {
           AutopreLoadControl();
+          pros::delay(10);
         }
       
     });
@@ -50,7 +52,7 @@ void initialize() {
     //   while(true) {
     //     liftWsAuto();
     //   }
-    // });
+    // // });
     pros::Task secondScoreTask([] {
       while (true) {
         secondScoreControl();
@@ -65,6 +67,8 @@ void initialize() {
 
       
     });
+
+
 // pros::Task mancoltask([&]()  {
 //   while (true) {
 //     manCol();
@@ -75,17 +79,20 @@ void initialize() {
 //   lemlib::Chassis chassis(drivetrain, latNoMogo, angNoMogo, sensors, &throttle_curve, &steer_curve);
 // }
 // });
+pros::Task autoColorSortTask([] {
+  while (true) {
+  void sortingControlTask();
+  pros::delay(10);
+  }
+});
+sorter.set_led_pwm(35);
+
 
 pros::Task screen_task([&]() {
         while (true) {
-            
-            // pros::lcd::print(0, "X: %f", chassis.getPose().x); 
-            // pros::lcd::print(1, "Y: %f", chassis.getPose().y); 
-            // pros::lcd::print(2, "Theta: %f", chassis.getPose().theta); 
-            
-
-            pros::lcd::print(0, "left_temps: %f", left_motors.get_temperature_all());
-            pros::lcd::print(1, "right_temps: %f", right_motors.get_temperature_all());  
+            pros::lcd::print(0, "X: %f", chassis.getPose().x);
+            pros::lcd::print(1, "Y: %f", chassis.getPose().y);
+            pros::lcd::print(2, "Theta: %f", chassis.getPose().theta);  
             pros::delay(20);
         }
     });
@@ -94,13 +101,15 @@ pros::Task screen_task([&]() {
 
 
 void disabled() {
-  mogo.set_value(true);
+mogo.set_value(false);
+
+
   chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
 }
 
 
 void competition_initialize() {
-  chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
+  chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
 }
 
 
@@ -108,18 +117,19 @@ void autonomous() {
 chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
 
 
-     int autonSelector = 0;  
+     int autonSelector = 1;  
 
     switch (autonSelector) {
         case 0:
+    
         bristolSkills();
         break;
 
         case 1:
-        
+        rightSideMidRush();
             break;
         case 2:
-            redSideMogoRush();
+      leftSideMidRush();
             break;
         case 3:
          
@@ -138,6 +148,11 @@ chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
 
             redSawp2();
             break;
+        case 8:
+
+            red6SAWP();
+            break;
+
     }
     
 
@@ -159,7 +174,7 @@ chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
 bool mogoActivated = false;
 bool intakeActivated = false;
 bool doinkerActivated = false;
-
+bool doinker2Activated = false;
 
 
 
@@ -168,34 +183,38 @@ bool doinkerActivated = false;
 
 void opcontrol() {
 
-
-  
-  setAutonState(0);
-  setAutonState(1);
-    pros::delay(250);
-        intake.move(127);
-    pros::delay(400);
-    intake.move(0);
-    pros::delay(100);
-    setAutonState(3);
-    pros::delay(500);
-    setAutonState(0);
-    resetStates();
-  
+  // bristolSkills();
+  // pros::Task sortingTask(sortingControlTask); 
+// autonDisabled = true;
 
 
+chassis.setBrakeMode(pros::E_MOTOR_BRAKE_BRAKE);
+// setAutonState(1);
+//               pros::delay(320);
+//                   intake.move(127);
+//               pros::delay(300);
+//               intake.move(0);
+//               pros::delay(40);
 
 
+//     setAutonState(3);
+//     pros::delay(500);
   chassis.setBrakeMode(pros::E_MOTOR_BRAKE_BRAKE);
   pros::Controller master(pros::E_CONTROLLER_MASTER);
-
+  
+  
   while (true) {
+  
+    // if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
+    //   mogoChassis.moveToPoint(0, 24, 1500);
+    //   mogoChassis.moveToPoint(0, 0,1500, {.forwards = false});
+    // }
     std::cout << "Motor Temperature: " << left_motors.get_temperature_all()[1];
     int leftY  = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
     int rightX = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
     chassis.arcade(leftY, rightX);
 
-    
+      
     if (!intakeOverride) {
       if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
         intake.move(127);
@@ -228,22 +247,26 @@ void opcontrol() {
 
     
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)) {
-      resetStates();
+      cycleDescoreState();
     }
 
     
-    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
-      doinkerActivated = !doinkerActivated;
-      doinker.set_value(doinkerActivated);
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
+      doinker2Activated = !doinker2Activated;
+      doinker2.set_value(doinker2Activated);
+    pros::delay(60);
     }
 
-    // if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
-    //      cycleTipState();
-    // }
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
+         resetArmPos();
+    }
     
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_B)) {
-    //   sortOn = true;
-    intake.move(-127);
+    doinkerActivated = !doinkerActivated;
+   doinker.set_value(doinkerActivated);
+   pros::delay(20);
+// pros::Task sort(autoColorSort);
+    // cycleTipState();
     }
 
     
@@ -253,6 +276,13 @@ void opcontrol() {
     }
 
     pros::delay(20);
+  }
+
+
+  if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
+    // sortingTaskRunning = !sortingTaskRunning;
+    // allianceStake();
+    // intakeLift.set_value(true);
   }
 }
 

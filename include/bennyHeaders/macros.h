@@ -13,6 +13,8 @@ void secondLoadControl();
 void secondScoreControl();
 void liftWsAuto();
 void AutopreLoadControl();
+void allianceStake();
+void resetArmPos();
 //intake macros
 extern int currentArmState;
 extern int currentAutonState;

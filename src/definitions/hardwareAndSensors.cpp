@@ -3,7 +3,7 @@
 pros::Optical sorter(15);
 
 
-pros::Distance frontDist(3);
-pros::Distance rightDist(7);
+pros::Distance frontDist(2);
+pros::Distance rightDist(6);
 pros::Distance backDist(5);
-pros::Distance leftDist(4);
+pros::Distance leftDist(1);

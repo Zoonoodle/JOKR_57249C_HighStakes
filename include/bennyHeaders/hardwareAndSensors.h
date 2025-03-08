@@ -56,7 +56,7 @@ extern pros::ADIDigitalIn limit;
 extern bool mogoActivated;
 extern bool intakeActivated;
 extern bool doinkerActivated;
-
+extern bool doinker2Activated;
 extern pros::Motor intake;
 extern pros::Rotation armSensor;
 extern pros::MotorGroup left_motors;

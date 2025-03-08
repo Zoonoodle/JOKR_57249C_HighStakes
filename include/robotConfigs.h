@@ -13,9 +13,10 @@ extern pros::Controller master;
 // Digital Out
 extern pros::ADIDigitalOut mogo;
 extern pros::ADIDigitalOut doinker;
+extern pros::ADIDigitalOut doinker2;
 extern pros::ADIDigitalOut intakeLift;
 extern pros::ADIDigitalOut pincher;
-
+extern bool autonDisabled;
 // Digital In
 extern pros::ADIDigitalIn limit;
 

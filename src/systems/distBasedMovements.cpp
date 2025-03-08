@@ -16,14 +16,14 @@ static double backFiltered  = 0.0;
 static double leftFiltered  = 0.0;
 
 // Exponential smoothing factor
-static constexpr double alpha = 1;
+static constexpr double alpha = 1.1;
 
 // PD Gains for heading hold
 static constexpr double kP_h = 1.0;
 static constexpr double kD_h = 2.0;
 
 // Tolerance for distance error (mm)
-static constexpr double DIST_TOLERANCE = 5.0;
+static constexpr double DIST_TOLERANCE = 10.0;
 
 inline double clamp(double value, double minVal, double maxVal) {
     if (value < minVal) return minVal;

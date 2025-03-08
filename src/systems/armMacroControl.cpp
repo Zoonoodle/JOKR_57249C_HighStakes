@@ -2,7 +2,7 @@
 #include "pros/rtos.hpp"
 #include "bennyHeaders/hardwareAndSensors.h"
 #include "bennyHeaders/macros.h"
-
+#include "robotConfigs.h"
 
 bool descoreActivated = false;
 bool loadActivated    = false;
@@ -14,31 +14,31 @@ bool fromLoad         = false;
 bool firstLoad = false;
 bool fromPreScore = false;
 bool autowsLoad = false;
-
+bool isAlliance= false;
 
 
 
 const int numOfLoadStates    = 3; 
 const int numOfDescoreStates = 2;
 const int numOfTipStates     = 2;
-const int numOfAutonStates   = 6;
-
+const int numOfAutonStates   = 7;
+const int numOfAllianceStates = 2;
 
 int neutralPos     = 0;
-int loadPos        = 12000; 
-int preScorePos    = 18000; 
-int scorePos       = 53000; 
-int descoreWallPos = 50000;
-int tippingPos     = 62000;
+int loadPos        = 11500; 
+int preScorePos    = 17000; 
+int scorePos       = 52000; 
+int descoreWallPos = 48000;
+int tippingPos     = 60000;
 int untippingPos   = 74000;
-int alliancePos    = 65000;
-
+int alliancePos    = 61500;
+int preAlliancePos = 49000;
 
 int LoadStates[numOfLoadStates]       = { loadPos,      preScorePos,    scorePos    };
 int DescoreStates[numOfDescoreStates] = { neutralPos,   descoreWallPos };
 int tipStates[numOfTipStates]         = { tippingPos,   untippingPos   };
-int autonStates[numOfAutonStates]     = { neutralPos,   loadPos,        59000, alliancePos, 73000, preScorePos};
-
+int autonStates[numOfAutonStates]     = { neutralPos,   loadPos,        59000, alliancePos, 73000, preScorePos, preAlliancePos};
+int allianceStates[numOfAllianceStates] = {preAlliancePos, alliancePos};
 
 
 
@@ -48,7 +48,7 @@ int targetArmState      = 0;
 int currentTipState     = -1;
 int currentAutonState   = 0;
 int currentDescoreState = -1;
-
+int currentAllianceState = -1;
 
 
 
@@ -62,15 +62,22 @@ void resetStates() {
   intakeOverride     = false;
   secondLoaded = false;
   
+  currentAllianceState = -1;
   currentArmState    = -1;  
   currentTipState    = -1;
-  currentDescoreState= -1;
+
 
   
-  targetArmState   = neutralPos;
+  // targetArmState   = neutralPos;
 }
 
-
+void resetArmPos() {
+  targetArmState = -11500;
+  pros::delay(100);
+  armSensor.reset_position();
+  targetArmState = 0;
+  resetStates();
+}
 
 
 void cycleTipState() {
@@ -79,7 +86,7 @@ void cycleTipState() {
   currentArmState     = -1;
   loadActivated       = false;
   descoreActivated    = false;
-
+  //  secondLoaded = false; 
   tipActivated        = true;
   currentTipState++;
   if (currentTipState == numOfTipStates) {
@@ -93,15 +100,21 @@ void cycleTipState() {
 
 
 void cycleDescoreState() {
-  resetStates(); 
-
-  descoreActivated   = true;
-  currentDescoreState++;
-  if (currentDescoreState == numOfDescoreStates) {
-    currentDescoreState = 0;
-  }
-  targetArmState = DescoreStates[currentDescoreState];
+  
+  
+    descoreActivated   = true;
+    currentDescoreState++;
+    if (currentDescoreState == numOfDescoreStates) {
+      currentDescoreState = 0;
+    }
+    targetArmState = DescoreStates[currentDescoreState];
+ 
+    resetStates(); 
+  
+ 
+    
 }
+
 
 
 
@@ -112,7 +125,7 @@ void cycleLoadState() {
   currentTipState     = -1;
   descoreActivated    = false;
   tipActivated        = false;
-
+  currentAllianceState = -1;
   loadActivated = true;
   currentArmState++;
 
@@ -135,11 +148,35 @@ void cycleLoadState() {
 
 void setAutonState(int autoState) {
   resetStates();
+  
   currentAutonState = autoState;
+
+  if (currentAutonState == 6) {
+    isAlliance = true;
+  }
   targetArmState    = autonStates[currentAutonState];
 }
 
+void allianceStake() {
 
+  currentDescoreState = -1;
+  currentTipState     = -1;
+  descoreActivated    = false;
+  tipActivated        = false;
+
+ 
+  currentAllianceState++;
+
+  if (currentAllianceState >= numOfAllianceStates) {
+    currentAllianceState = 0; 
+   
+  }
+
+
+  
+isAlliance = true;
+  targetArmState = allianceStates[currentAllianceState];
+}
 
 
 
@@ -157,7 +194,7 @@ void preLoadControl() {
       while (hooks_rot.get_position() > -1000) {
         pros::delay(10);
       }
-
+      
       
       pros::delay(200);
       fromPreScore = true;
@@ -165,13 +202,10 @@ void preLoadControl() {
       intake.move(127);
 
       
-      while (sorter.get_proximity() < 100) {
+      while (sorter.get_proximity() < 150) {
         pros::delay(10);
       }
-      hooks_rot.reset_position();
-      while (hooks_rot.get_position() < 17000) {
-        pros::delay(10);
-      }
+    pros::delay(20);
       
       
       intake.move(0);
@@ -180,7 +214,11 @@ void preLoadControl() {
       if (firstLoad) {
         secondLoaded = true;
       }
-      
+      if (autonDisabled) {
+        pros::delay(300);
+        targetArmState = LoadStates[0];
+      }
+    
 
       
 
@@ -265,36 +303,42 @@ void secondScoreControl() {
         pros::delay(10);
       }
       
-      pros::delay(250);
-      intakeOverride = true;
-      intake.move(127);
-      pros::delay(200); 
-      intake.move(0);
+
+    
+
+
+      pros::delay(20);
+      intakeOverride = false;
+    //     intakeOverride = false;
+    //   intakeOverride = true;
+    //   intake.move(127);
+    //   pros::delay(200); 
+    //   intake.move(0);
       
     
       
-      currentArmState = 2;
-      fromPreScore = true;
-      targetArmState  = LoadStates[2] + 2000; 
+    //   currentArmState = 2;
+    //   fromPreScore = true;
+    //   targetArmState  = LoadStates[2] + 2000; 
 
       
       
-      pros::delay(750);
+    
 
   
-      intakeOverride = false;
+    //   intakeOverride = false;
     
 
    
 
       
-      secondLoaded = false;
+    //   secondLoaded = false;
 
      
-      resetStates();
-      // currentArmState = 0;
-      // targetArmState = LoadStates[currentArmState];
-    }
+
+    //   // currentArmState = 0;
+    //   // targetArmState = LoadStates[currentArmState];
+     }
     pros::delay(10);
   }
 }
@@ -303,15 +347,15 @@ void secondScoreControl() {
 
 
 void ArmStateControl() {
-  double kp = 0.007; 
-  double kd = 0.001;
+    double kp = 0.004; 
+  double kd = 0.004;
   static double prevError = 0;
 
   while (true) {
     
     if (fromPreScore || loadActivated && currentArmState == 2) {
-      kp = 0.012; 
-      kd = 0.001; 
+      kp = 0.013; 
+      kd = 0.0009; 
       fromPreScore = false;
     } 
     else if (fromLoad && currentArmState == 0) {
@@ -331,6 +375,18 @@ void ArmStateControl() {
       kp = 0.003;
       kd = 0.0005;
     } 
+
+    if (descoreActivated) {
+      descoreActivated = false;
+      double kp = 0.003; 
+      double kd = 0.005;
+    }
+
+    if (isAlliance) {
+      kp = 0.003;
+      kd = 0.0008;
+      isAlliance = false;
+    }
     else {
       
       kp = 0.006;
