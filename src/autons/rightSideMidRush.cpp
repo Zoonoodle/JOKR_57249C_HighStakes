@@ -61,7 +61,7 @@ chassis.turnToHeading(-324, 400);
     
 
     //swing to second
-    chassis.swingToHeading(152, lemlib::DriveSide::RIGHT, 450, {.minSpeed = 30});
+    chassis.swingToHeading(153, lemlib::DriveSide::RIGHT, 450, {.minSpeed = 30});
     
     pros::delay(300);
     doinker2.set_value(true);
@@ -94,16 +94,16 @@ chassis.turnToHeading(-324, 400);
 
 
 
-   chassis.swingToHeading(320, lemlib::DriveSide::LEFT, 550);
+   chassis.swingToHeading(320, lemlib::DriveSide::LEFT, 450);
   
 //    intakeLift.set_value(false);
 //    pros::delay(100);
 intake.move(0);
- chassis.moveToPoint(-51,7, 1200, {.minSpeed = 95});
+ chassis.moveToPoint(-51,7, 1200, {.minSpeed = 80});
  chassis.waitUntil(5);
  intake.move(127);
  chassis.waitUntilDone();
- chassis.moveToPoint(-49, 3.5, 700, {.forwards = false, .maxSpeed = 60, .minSpeed =40});
+ chassis.moveToPoint(-49, 4, 700, {.forwards = false, .maxSpeed = 60, .minSpeed =40});
  chassis.waitUntilDone();
  intakeLift.set_value(true);
  pros::delay(200);
@@ -111,7 +111,7 @@ intake.move(0);
 chassis.waitUntil(4);
 intakeLift.set_value(false);
     
-    
+    pros::delay(200);
     chassis.moveToPoint(-39, -13, 700, {.forwards = false, .earlyExitRange = 10});
     
  
@@ -122,7 +122,7 @@ intakeLift.set_value(false);
     intake.move(127);
     mogo.set_value(false);
   
-    chassis.turnToHeading(237, 650);
+    chassis.turnToHeading(237, 550, {.earlyExitRange = 8});
     intake.move(0);
     setAutonState(7);
     moveDualFront(290, 169, true, true, true, 80, 1000);
