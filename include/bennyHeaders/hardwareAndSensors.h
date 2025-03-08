@@ -36,9 +36,9 @@ extern pros::Imu imu1;
 extern pros::Imu imu2;
 extern pros::Imu imu3;
 extern pros::Optical sorter;
-extern pros::Distance frontDist;
+extern pros::Distance frontDistLeft;
 extern pros::Distance rightDist;
-extern pros::Distance backDist;
+extern pros::Distance frontDistRight;
 extern pros::Distance leftDist;
 
 extern lemlib::OdomSensors sensors;
