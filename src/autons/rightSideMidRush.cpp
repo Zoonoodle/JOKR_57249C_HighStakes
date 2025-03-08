@@ -81,7 +81,7 @@ chassis.turnToHeading(-325, 400);
     pros::delay(100);
     intake.move(127);
     chassis.turnToHeading(130, 350);
-    chassis.moveToPoint(-12, -12, 550, {.earlyExitRange = 10});
+    chassis.moveToPoint(-10, -12, 550, {.earlyExitRange = 10});
     chassis.swingToHeading(240, lemlib::DriveSide::RIGHT, 400, {.earlyExitRange = 10});
     chassis.moveToPoint(-40, -24, 1250);
 
@@ -111,14 +111,14 @@ chassis.turnToHeading(-325, 400);
 
  
     setAutonState(1);
-    chassis.turnToHeading(140, 500, {.earlyExitRange = 10});
+    chassis.turnToHeading(135, 500, {.earlyExitRange = 10});
     currentIntakeCommand = STOPRED;
-    chassis.moveToPoint(-43, -40, 1000);
+    chassis.moveToPoint(-43, -38, 1000);
     intake.move(127);
     mogo.set_value(false);
-
+  
     chassis.turnToHeading(240, 650);
-    
+    intake.move(0);
     setAutonState(7);
     moveDualFront(285, 168, true, true, true, 80, 1000);
     
