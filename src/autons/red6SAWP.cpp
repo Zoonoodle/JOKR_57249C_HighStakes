@@ -28,23 +28,23 @@ void red6SAWP() {
         pros::delay(40);
         setAutonState(3);
         //260,340
-        moveDualFront(340, 260, true, true, true, 70, 300);
+        moveDualFront(330, 260, true, true, true, 70, 300);
         
         pros::delay(300);
       
         
         chassis.moveToPoint(12, -30, 1750, {.forwards = false, .maxSpeed = 70});
         //-24, 12-30
-        chassis.waitUntil(33);
+        chassis.waitUntil(35);
         setAutonState(0);
         mogo.set_value(true);//23-42-251
         pros::delay(200);
         chassis.turnToHeading(135, 650);
         intake.move(127);
+
         //middle rush
-        chassis.moveToPoint(24, -40, 900, {.minSpeed = 30, .earlyExitRange = 3});
+        chassis.moveToPoint(24, -42, 900, {.minSpeed = 30, .earlyExitRange = 3});
         chassis.turnToHeading(100, 400, {.minSpeed = 60});
-        chassis.waitUntilDone();
         chassis.moveToPoint(37, -42, 750, {.maxSpeed = 60});
         chassis.waitUntilDone();
         chassis.moveToPoint(15, -34, 800, {.forwards = false, .earlyExitRange = 5});
@@ -56,12 +56,12 @@ void red6SAWP() {
         chassis.moveToPoint(-18, 0, 800, {.maxSpeed = 65});
         intakeLift.set_value(true);
         mogo.set_value(false);
+        currentIntakeCommand = SORTFIRST;
         chassis.turnToHeading(20, 300);
         intakeLift.set_value(false);
         chassis.waitUntilDone();
-        intake.move(60);
-        chassis.moveToPoint(-33, -26, 1000, {.forwards = false, .maxSpeed = 70});
-        chassis.waitUntil(33);
+        chassis.moveToPoint(-33, -26, 1500, {.forwards = false, .maxSpeed = 50});
+        chassis.waitUntil(36);
         mogo.set_value(true);
         pros::c::delay(100);
         intake.move(127);
