@@ -56,7 +56,7 @@ chassis.turnToHeading(-325, 400);
     chassis.turnToHeading(115, 450);
 
     //grab first middle
-    chassis.moveToPoint(-1, -38, 900);
+    chassis.moveToPoint(0, -39, 900);
     doinker.set_value(true);
     
 
@@ -113,14 +113,12 @@ chassis.turnToHeading(-325, 400);
     setAutonState(1);
     chassis.turnToHeading(140, 500, {.earlyExitRange = 10});
     currentIntakeCommand = STOPRED;
-    chassis.moveToPoint(-43, -38, 1000);
+    chassis.moveToPoint(-43, -40, 1000);
     intake.move(127);
     mogo.set_value(false);
 
     chassis.turnToHeading(240, 650);
-    currentArmState = 1; 
-    loadActivated   = true; 
-    targetArmState  = LoadStates[1]; 
+    
     setAutonState(7);
     moveDualFront(285, 168, true, true, true, 80, 1000);
     
