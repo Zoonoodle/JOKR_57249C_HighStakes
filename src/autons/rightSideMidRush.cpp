@@ -61,14 +61,14 @@ chassis.turnToHeading(-325, 400);
     
 
     //swing to second
-    chassis.swingToHeading(155, lemlib::DriveSide::RIGHT, 450);
+    chassis.swingToHeading(155, lemlib::DriveSide::RIGHT, 450, {.minSpeed = 30});
     
-    pros::delay(200);
+    pros::delay(300);
     doinker2.set_value(true);
     chassis.waitUntilDone();
     left_motors.move(20);
     right_motors.move(20);
-    pros::delay(100);
+    pros::delay(150);
     left_motors.move(0);
     right_motors.move(0);
 
@@ -97,28 +97,29 @@ chassis.turnToHeading(-325, 400);
   
 //    intakeLift.set_value(false);
 //    pros::delay(100);
- chassis.moveToPoint(, float y, int timeout)
-//     // chassis.moveToPoint(-47, -3, 400, {.forwards = false, .minSpeed = 40});
-//     // chassis.moveToPoint(-53, 8, 800, {.maxSpeed = 95});
+ chassis.moveToPoint(-51,6, 1200, {.maxSpeed = 90});
+ chassis.moveToPoint(-49, 3.5, 700, {.forwards = false, .maxSpeed = 60, .minSpeed =20, .earlyExitRange = 1});
+ chassis.moveToPoint(-51,6, 900, {.maxSpeed = 90});
+intakeLift.set_value(true);
+    pros::delay(400);
+    intakeLift.set_value(false);
     
-//     // pros::delay(300);
-    
-//     chassis.moveToPoint(-39, -13, 700, {.forwards = false, .earlyExitRange = 10});
+    chassis.moveToPoint(-39, -13, 700, {.forwards = false, .earlyExitRange = 10});
 
  
-//     setAutonState(1);
-//     chassis.turnToHeading(140, 500, {.earlyExitRange = 10});
-//     currentIntakeCommand = STOPRED;
-//     chassis.moveToPoint(-43, -29, 1000);
-//     intake.move(127);
-//     mogo.set_value(false);
+    setAutonState(1);
+    chassis.turnToHeading(140, 500, {.earlyExitRange = 10});
+    currentIntakeCommand = STOPRED;
+    chassis.moveToPoint(-43, -29, 1000);
+    intake.move(127);
+    mogo.set_value(false);
 
-//     chassis.turnToHeading(235, 650);
-//     currentArmState = 1; 
-//     loadActivated   = true; 
-//     targetArmState  = LoadStates[1]; 
-//     setAutonState(7);
-//     moveDualFront(285, 168, true, true, true, 80, 1000);
+    chassis.turnToHeading(235, 650);
+    currentArmState = 1; 
+    loadActivated   = true; 
+    targetArmState  = LoadStates[1]; 
+    setAutonState(7);
+    moveDualFront(285, 168, true, true, true, 80, 1000);
     
 
     
