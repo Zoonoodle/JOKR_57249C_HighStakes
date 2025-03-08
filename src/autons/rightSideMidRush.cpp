@@ -123,7 +123,7 @@ chassis.waitUntilDone();
     chassis.turnToHeading(240, 650);
     intake.move(0);
     setAutonState(7);
-    moveDualFront(285, 168, true, true, true, 80, 1000);
+    moveDualFront(293, 170, true, true, true, 80, 1000);
     
 
     
