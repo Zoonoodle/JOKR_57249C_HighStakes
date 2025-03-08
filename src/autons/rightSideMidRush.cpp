@@ -1,5 +1,6 @@
 #include "lemlib/chassis/chassis.hpp"
 #include "main.h"
+#include "pros/abstract_motor.hpp"
 #include "pros/motors.h"
 #include "pros/rtos.hpp"
 #include "sortingControl.h"
@@ -103,7 +104,7 @@ intake.move(0);
  chassis.waitUntil(5);
  intake.move(127);
  chassis.waitUntilDone();
- chassis.moveToPoint(-49, 2, 700, {.forwards = false, .maxSpeed = 90, .minSpeed =80});
+ chassis.moveToPoint(-49, 2, 500, {.forwards = false, .maxSpeed = 90, .minSpeed =80, .earlyExitRange = 2});
  chassis.waitUntilDone();
  intakeLift.set_value(true);
  pros::delay(200);
@@ -125,7 +126,10 @@ intakeLift.set_value(false);
     chassis.turnToHeading(237, 550, {.earlyExitRange = 8});
     intake.move(0);
     setAutonState(7);
-    moveDualFront(290, 169, true, true, true, 80, 1000);
+    left_motors.set_brake_mode_all(pros::E_MOTOR_BRAKE_COAST);
+    right_motors.set_brake_mode_all(pros::E_MOTOR_BRAKE_COAST);
+
+    moveDualFront(288, 165, true, true, true, 90, 1200);
     
 
     
