@@ -13,7 +13,8 @@
 
 void rightSideMidRush() {
              
-
+intakeLift.set_value(true);
+pros::delay(9999);
 pros::Task intakeTawsk(intakeControlTask);
 
 std::int32_t set_integration_time(20);
