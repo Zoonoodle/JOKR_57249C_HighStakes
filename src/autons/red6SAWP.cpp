@@ -65,7 +65,7 @@ void red6SAWP() {
         chassis.turnToHeading(20, 300);
         intake.move(0);
         intakeLift.set_value(false);
-        pros::delay(200);
+        pros::delay(500);
         intake.move(80);
         pros::delay(300);
         intake.move(0);
