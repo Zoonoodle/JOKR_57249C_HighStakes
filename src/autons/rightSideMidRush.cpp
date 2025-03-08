@@ -65,18 +65,22 @@ chassis.turnToHeading(-325, 400);
     
     pros::delay(200);
     doinker2.set_value(true);
+    chassis.waitUntilDone();
     left_motors.move(20);
     right_motors.move(20);
-    pros::delay(200);
+    pros::delay(100);
     left_motors.move(0);
     right_motors.move(0);
-    chassis.moveToPoint(-23, -3, 900, {.forwards = false});
+
+
+
+    chassis.moveToPoint(-23, -3, 800, {.forwards = false});
     chassis.waitUntilDone();
     doinker.set_value(false);
     doinker2.set_value(false);
     pros::delay(100);
     intake.move(127);
-    chassis.turnToHeading(130, 350);
+    
     chassis.moveToPoint(-12, -12, 550, {.earlyExitRange = 10});
     chassis.swingToHeading(240, lemlib::DriveSide::RIGHT, 400, {.earlyExitRange = 10});
     chassis.moveToPoint(-40, -24, 1250);
@@ -111,7 +115,7 @@ chassis.turnToHeading(-325, 400);
     setAutonState(1);
     chassis.turnToHeading(140, 500, {.earlyExitRange = 10});
     currentIntakeCommand = STOPRED;
-    chassis.moveToPoint(-33, -29, 1000);
+    chassis.moveToPoint(-43, -29, 1000);
     intake.move(127);
     mogo.set_value(false);
 
@@ -120,7 +124,7 @@ chassis.turnToHeading(-325, 400);
     loadActivated   = true; 
     targetArmState  = LoadStates[1]; 
     setAutonState(7);
-    moveDualFront(285, 168, true, true, true, 90, 1000);
+    moveDualFront(285, 168, true, true, true, 80, 1000);
     
 
     
