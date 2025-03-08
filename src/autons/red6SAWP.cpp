@@ -55,10 +55,14 @@ void red6SAWP() {
         chassis.turnToHeading(305, 750);
         chassis.moveToPoint(6, -10, 1000, {.minSpeed = 60, .earlyExitRange = 7});
         intakeLift.set_value(true);
-        currentIntakeCommand = STOPFIRST;
         chassis.moveToPoint(-18, 0, 800, {.maxSpeed = 65});
         chassis.waitUntilDone();
         mogo.set_value(false);
         chassis.turnToHeading(20, 750);
+        intake.move(0);
+        chassis.moveToPoint(-30, -21, 1000, {.forwards = false});
+        chassis.waitUntil(29);
+        mogo.set_value(true);
+        intake.move(127);
 
 }
