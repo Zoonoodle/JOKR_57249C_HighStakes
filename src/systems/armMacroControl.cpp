@@ -21,7 +21,7 @@ bool isAlliance= false;
 const int numOfLoadStates    = 3; 
 const int numOfDescoreStates = 2;
 const int numOfTipStates     = 2;
-const int numOfAutonStates   = 7;
+const int numOfAutonStates   = 8;
 const int numOfAllianceStates = 2;
 
 int neutralPos     = 0;
@@ -29,15 +29,16 @@ int loadPos        = 11500;
 int preScorePos    = 17000; 
 int scorePos       = 52000; 
 int descoreWallPos = 48000;
+int preWSState = 30000;
 int tippingPos     = 60000;
 int untippingPos   = 74000;
 int alliancePos    = 61500;
 int preAlliancePos = 49000;
 
-int LoadStates[numOfLoadStates]       = { loadPos,      preScorePos,    scorePos    };
+int LoadStates[numOfLoadStates]       = { loadPos,      preScorePos,    scorePos};
 int DescoreStates[numOfDescoreStates] = { neutralPos,   descoreWallPos };
 int tipStates[numOfTipStates]         = { tippingPos,   untippingPos   };
-int autonStates[numOfAutonStates]     = { neutralPos,   loadPos,        59000, alliancePos, 73000, preScorePos, preAlliancePos};
+int autonStates[numOfAutonStates]     = { neutralPos,   loadPos,        59000, alliancePos, 73000, preScorePos, preAlliancePos, preWSState};
 int allianceStates[numOfAllianceStates] = {preAlliancePos, alliancePos};
 
 

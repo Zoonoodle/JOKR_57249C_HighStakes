@@ -23,6 +23,10 @@ chassis.setPose(0,0,0);
 pros::Task sortingTask(sortingControlTask);
 
 //load for Alliance Stake
+
+moveDualFront(293, 171, true, true, true, 80, 1000);
+setAutonState(7);
+pros::delay(100000);
 setAutonState(1);
 
 // turn and Score on alliance
@@ -33,7 +37,7 @@ chassis.turnToHeading(-325, 400);
     intake.move(0);
     pros::delay(40);
     setAutonState(3);
-    moveB(345, true, true, 50, 650);
+    moveF(345, true, true, 50, 650);
     
     pros::delay(200);
   
@@ -86,9 +90,9 @@ chassis.turnToHeading(-325, 400);
     chassis.moveToPoint(-46, -1, 700, {.earlyExitRange = 8});
     chassis.moveToPoint(-54, 9, 700, {.maxSpeed = 85});
     chassis.waitUntilDone();
-    moveB(325, false, false, 60, 550);
-    intakeLift.set_value(true);
-    moveB(189, true, true, 75, 700);
+    // moveB(325, false, false, 60, 550);
+    // intakeLift.set_value(true);
+    // moveB(189, true, true, 75, 700);
     intakeLift.set_value(false);
     // chassis.moveToPoint(-47, -3, 400, {.forwards = false, .minSpeed = 40});
     // chassis.moveToPoint(-53, 8, 800, {.maxSpeed = 95});
@@ -109,9 +113,7 @@ chassis.turnToHeading(-325, 400);
     currentArmState = 1; 
     loadActivated   = true; 
     targetArmState  = LoadStates[1]; 
-    moveB(155, true, true, 100, 1100);
-    setAutonState(2);
-
+   
 
     
 //     mogoChassis.turnToHeading(70, 750);
