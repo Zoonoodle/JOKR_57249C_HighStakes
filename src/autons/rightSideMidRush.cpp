@@ -56,7 +56,7 @@ chassis.turnToHeading(-325, 400);
     chassis.turnToHeading(115, 450);
 
     //grab first middle
-    chassis.moveToPoint(1, -40, 900);
+    chassis.moveToPoint(1, -38, 900);
     doinker.set_value(true);
     
 
@@ -97,9 +97,9 @@ chassis.turnToHeading(-325, 400);
   
 //    intakeLift.set_value(false);
 //    pros::delay(100);
- chassis.moveToPoint(-51,6, 1200, {.maxSpeed = 90});
- chassis.moveToPoint(-49, 3.5, 700, {.forwards = false, .maxSpeed = 60, .minSpeed =20, .earlyExitRange = 1});
- chassis.moveToPoint(-51,6, 900, {.maxSpeed = 90});
+ chassis.moveToPoint(-51,6, 1200, {.minSpeed = 90});
+ chassis.moveToPoint(-49, 3.5, 700, {.forwards = false, .maxSpeed = 60, .minSpeed =60, .earlyExitRange = 1});
+ chassis.moveToPoint(-51,6, 900, {.minSpeed = 90});
 intakeLift.set_value(true);
     pros::delay(400);
     intakeLift.set_value(false);
@@ -110,7 +110,7 @@ intakeLift.set_value(true);
     setAutonState(1);
     chassis.turnToHeading(140, 500, {.earlyExitRange = 10});
     currentIntakeCommand = STOPRED;
-    chassis.moveToPoint(-43, -29, 1000);
+    chassis.moveToPoint(-43, -40, 1000);
     intake.move(127);
     mogo.set_value(false);
 

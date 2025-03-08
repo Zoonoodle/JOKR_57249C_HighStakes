@@ -300,7 +300,7 @@
     "upload_options": {
       "slot": 1,
       "icon": "alien",
-      "after": "run"
+      "after": "screen"
     },
     "use_early_access": false
   }

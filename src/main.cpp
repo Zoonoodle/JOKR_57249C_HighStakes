@@ -182,7 +182,7 @@ bool doinker2Activated = false;
 
 
 void opcontrol() {
-rightSideMidRush();
+// rightSideMidRush();
   // bristolSkills();
   // pros::Task sortingTask(sortingControlTask); 
 // autonDisabled = true;
