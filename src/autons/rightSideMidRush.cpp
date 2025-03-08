@@ -74,14 +74,15 @@ chassis.turnToHeading(-325, 400);
 
 
 
-    chassis.moveToPoint(-23, -3, 800, {.forwards = false});
+    chassis.moveToPoint(-23, -3, 900, {.forwards = false});
     chassis.waitUntilDone();
     doinker.set_value(false);
     doinker2.set_value(false);
     pros::delay(100);
     intake.move(127);
     
-    chassis.moveToPoint(-10, -12, 550, {.earlyExitRange = 10});
+    chassis.turnToHeading(130, 300);
+    chassis.moveToPoint(-12, -12, 550, {.earlyExitRange = 10});
     chassis.swingToHeading(240, lemlib::DriveSide::RIGHT, 400, {.earlyExitRange = 10});
     chassis.moveToPoint(-42, -24, 1250);
 
