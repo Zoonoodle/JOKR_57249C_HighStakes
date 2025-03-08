@@ -23,7 +23,13 @@ void red6SAWP() {
     chassis.turnToHeading(325, 400);
         pros::delay(400);//200
         intake.move(127);
-        pros::delay(350);
+        pros::delay(150); //350
+        //temp
+        intake.move(0);
+        pros::delay(150);
+        intake.move(127);
+        pros::delay(150);
+        // end temp
         intake.move(0);
         pros::delay(40);
         setAutonState(3);
@@ -59,22 +65,22 @@ void red6SAWP() {
         chassis.turnToHeading(20, 300);
         intake.move(0);
         intakeLift.set_value(false);
-        pros::delay(100);
-        intake.move(60);
-        pros::delay(100);
+        pros::delay(200);
+        intake.move(80);
+        pros::delay(300);
         intake.move(0);
         chassis.waitUntilDone();
         chassis.moveToPoint(-30, -26, 1500, {.forwards = false, .maxSpeed = 50});
-        // chassis.waitUntil(36);
-        // mogo.set_value(true);
-        // pros::c::delay(100);
-        // intake.move(127);
-        // chassis.waitUntilDone();
-        // chassis.turnToHeading(270, 750);
-        // chassis.moveToPoint(-45, -26, 1000);
-        // chassis.moveToPoint(-33, -26, 1000, {.forwards = false});
-        // chassis.waitUntilDone();
-        // chassis.turnToHeading(180, 1000);
-        // chassis.moveToPoint(-33, -40, 1000, {.maxSpeed = 50});
+        chassis.waitUntil(36);
+        mogo.set_value(true);
+        pros::c::delay(100);
+        intake.move(127);
+        chassis.waitUntilDone();
+        chassis.turnToHeading(270, 750);
+        chassis.moveToPoint(-45, -26, 1000, {.minSpeed = });
+        chassis.moveToPoint(-33, -26, 1000, {.forwards = false});
+        chassis.waitUntilDone();
+        chassis.turnToHeading(180, 500);
+        chassis.moveToPoint(-33, -40, 1000, {.maxSpeed = 50});
         
 }
