@@ -27,7 +27,7 @@ pros::Task sortingTask(sortingControlTask);
 setAutonState(1);
 
 // turn and Score on alliance
-chassis.turnToHeading(-325, 400);
+chassis.turnToHeading(-324, 400);
     pros::delay(300);
     intake.move(127);
     pros::delay(150);
@@ -103,7 +103,7 @@ intake.move(0);
  chassis.waitUntil(5);
  intake.move(127);
  chassis.waitUntilDone();
- chassis.moveToPoint(-49, 2, 700, {.forwards = false, .maxSpeed = 60, .minSpeed =40});
+ chassis.moveToPoint(-49, 3.5, 700, {.forwards = false, .maxSpeed = 60, .minSpeed =40});
  chassis.waitUntilDone();
  intakeLift.set_value(true);
  pros::delay(200);
@@ -122,10 +122,10 @@ chassis.waitUntilDone();
     intake.move(127);
     mogo.set_value(false);
   
-    chassis.turnToHeading(240, 650);
+    chassis.turnToHeading(237, 650);
     intake.move(0);
     setAutonState(7);
-    moveDualFront(293, 170, true, true, true, 80, 1000);
+    moveDualFront(290, 169, true, true, true, 80, 1000);
     
 
     
