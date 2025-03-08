@@ -65,9 +65,9 @@ void red6SAWP() {
         chassis.turnToHeading(20, 300);
         intake.move(0);
         intakeLift.set_value(false);
-        pros::delay(500);
+        pros::delay(600);
         intake.move(80);
-        pros::delay(300);
+        pros::delay(500);
         intake.move(0);
         chassis.waitUntilDone();
         chassis.moveToPoint(-30, -26, 1500, {.forwards = false, .maxSpeed = 50});
@@ -80,7 +80,7 @@ void red6SAWP() {
         chassis.moveToPoint(-45, -26, 1000, {.minSpeed = 60});
         chassis.moveToPoint(-33, -26, 1000, {.forwards = false});
         chassis.waitUntilDone();
-        chassis.turnToHeading(180, 500);
-        chassis.moveToPoint(-33, -40, 1000, {.maxSpeed = 50});
+        chassis.turnToHeading(135, 500);
+        setAutonState(2);
         
 }
