@@ -34,7 +34,7 @@ chassis.turnToHeading(-325, 400);
     intake.move(0);
     pros::delay(40);
     setAutonState(3);
-   moveDualFront(265, 339, true, bool , bool rightDecreasing, int maxSpeed, int timeOutMs)
+   moveDualFront(265, 339, true, true, true, 60, 500);
     
     pros::delay(200);
   
