@@ -81,9 +81,9 @@ chassis.turnToHeading(-324, 400);
     pros::delay(100);
     intake.move(127);
     
-    chassis.turnToHeading(130, 300);
-    chassis.moveToPoint(-12, -12, 550, {.earlyExitRange = 10});
-    chassis.swingToHeading(240, lemlib::DriveSide::RIGHT, 400, {.earlyExitRange = 10});
+    chassis.turnToHeading(130, 300, {.earlyExitRange = 10});
+    chassis.moveToPoint(-12, -14, 550, {.earlyExitRange = 10});
+    chassis.swingToHeading(250, lemlib::DriveSide::RIGHT, 400, {.earlyExitRange = 10});
     chassis.moveToPoint(-42, -24, 1250);
 
 
@@ -103,7 +103,7 @@ intake.move(0);
  chassis.waitUntil(5);
  intake.move(127);
  chassis.waitUntilDone();
- chassis.moveToPoint(-49, 4, 700, {.forwards = false, .maxSpeed = 60, .minSpeed =40});
+ chassis.moveToPoint(-49, 2, 700, {.forwards = false, .maxSpeed = 90, .minSpeed =80});
  chassis.waitUntilDone();
  intakeLift.set_value(true);
  pros::delay(200);
