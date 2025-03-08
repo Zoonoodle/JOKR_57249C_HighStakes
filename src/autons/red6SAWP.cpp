@@ -56,21 +56,25 @@ void red6SAWP() {
         chassis.moveToPoint(-18, 0, 800, {.maxSpeed = 65});
         intakeLift.set_value(true);
         mogo.set_value(false);
-        currentIntakeCommand = SORTFIRST;
         chassis.turnToHeading(20, 300);
+        intake.move(0);
         intakeLift.set_value(false);
+        pros::delay(100);
+        intake.move(60);
+        pros::delay(100);
+        intake.move(0);
         chassis.waitUntilDone();
-        chassis.moveToPoint(-33, -26, 1500, {.forwards = false, .maxSpeed = 50});
-        chassis.waitUntil(36);
-        mogo.set_value(true);
-        pros::c::delay(100);
-        intake.move(127);
-        chassis.waitUntilDone();
-        chassis.turnToHeading(270, 750);
-        chassis.moveToPoint(-45, -26, 1000);
-        chassis.moveToPoint(-33, -26, 1000, {.forwards = false});
-        chassis.waitUntilDone();
-        chassis.turnToHeading(180, 1000);
-        chassis.moveToPoint(-33, -40, 1000, {.maxSpeed = 50});
+        chassis.moveToPoint(-30, -26, 1500, {.forwards = false, .maxSpeed = 50});
+        // chassis.waitUntil(36);
+        // mogo.set_value(true);
+        // pros::c::delay(100);
+        // intake.move(127);
+        // chassis.waitUntilDone();
+        // chassis.turnToHeading(270, 750);
+        // chassis.moveToPoint(-45, -26, 1000);
+        // chassis.moveToPoint(-33, -26, 1000, {.forwards = false});
+        // chassis.waitUntilDone();
+        // chassis.turnToHeading(180, 1000);
+        // chassis.moveToPoint(-33, -40, 1000, {.maxSpeed = 50});
         
 }
