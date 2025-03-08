@@ -14,22 +14,27 @@
 void red6SAWP() {
 
     pros::Task sortingTask(sortingControlTask);
-   
-    std::int32_t set_integration_time(20);
-    chassis.setPose(0,0,0);
-    mogoChassis.setPose(0,0,0);
 
+    std::int32_t set_integration_time(20);
+    sorter.set_led_pwm(80);
+    mogoChassis.setPose(0,0,0);
+    chassis.setPose(0,0,0);
+    
+    //load for Alliance Stake
+    
     setAutonState(1);
-    chassis.turnToHeading(325, 400);
-        pros::delay(200);
+    
+    // turn and Score on alliance
+    chassis.turnToHeading(324, 400);
+        pros::delay(300);
         intake.move(127);
-        pros::delay(350);
+        pros::delay(150);
         intake.move(0);
         pros::delay(40);
         setAutonState(3);
-        moveF(445, true, true, 50, 600);
+       moveDualFront(265, 339, true, true, true, 60, 500);
         
-        pros::delay(300);
+        pros::delay(200);
       
         
         chassis.moveToPoint(12, -30, 1750, {.forwards = false, .maxSpeed = 70});
@@ -49,16 +54,7 @@ void red6SAWP() {
         chassis.moveToPoint(30, -27, 1000);
         chassis.turnToHeading(305, 750);
         chassis.moveToPoint(6, -10, 1000, {.minSpeed = 60, .earlyExitRange = 7});
-        
+        intakeLift.set_value(true);
         chassis.moveToPoint(-18, 0, 800, {.maxSpeed = 65});
-        mogo.set_value(false);
-        currentIntakeCommand = STOPRED;
-        chassis.turnToHeading(20, 300);
-        chassis.moveToPoint(-33, -26, 1000, {.forwards = false, .maxSpeed = 70});
-        chassis.waitUntil(33);
-        mogo.set_value(true);
-        pros:pros::c::delay(100);
-        intake.move(127);
-        chassis.waitUntilDone();
-        
+
 }
