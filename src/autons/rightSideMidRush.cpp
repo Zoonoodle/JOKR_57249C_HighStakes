@@ -61,7 +61,7 @@ chassis.turnToHeading(-324, 400);
     
 
     //swing to second
-    chassis.swingToHeading(155, lemlib::DriveSide::RIGHT, 450, {.minSpeed = 30});
+    chassis.swingToHeading(152, lemlib::DriveSide::RIGHT, 450, {.minSpeed = 30});
     
     pros::delay(300);
     doinker2.set_value(true);
@@ -108,12 +108,12 @@ intake.move(0);
  intakeLift.set_value(true);
  pros::delay(200);
  chassis.moveToPoint(-51,7, 900, {.minSpeed = 95});
-chassis.waitUntilDone();
-    
+chassis.waitUntil(4);
+intakeLift.set_value(false);
     
     
     chassis.moveToPoint(-39, -13, 700, {.forwards = false, .earlyExitRange = 10});
-    intakeLift.set_value(false);
+    
  
     setAutonState(1);
     chassis.turnToHeading(135, 500, {.earlyExitRange = 10});
