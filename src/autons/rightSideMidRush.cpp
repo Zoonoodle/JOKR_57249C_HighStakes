@@ -80,35 +80,36 @@ chassis.turnToHeading(-325, 400);
     doinker2.set_value(false);
     pros::delay(100);
     intake.move(127);
-    chassis.turnToHeading(130, 350);
+    
     chassis.moveToPoint(-10, -12, 550, {.earlyExitRange = 10});
     chassis.swingToHeading(240, lemlib::DriveSide::RIGHT, 400, {.earlyExitRange = 10});
-    chassis.moveToPoint(-40, -24, 1250);
+    chassis.moveToPoint(-42, -24, 1250);
 
 
 
     chassis.turnToHeading(330, 550);
-    chassis.moveToPoint(-46, -1, 700, {.earlyExitRange = 8});
+    chassis.moveToPoint(-47, -1, 700, {.earlyExitRange = 8});
 
 
 
 
-   chassis.swingToHeading(310, lemlib::DriveSide::LEFT, 550);
+   chassis.swingToHeading(320, lemlib::DriveSide::LEFT, 550);
   
 //    intakeLift.set_value(false);
 //    pros::delay(100);
- chassis.moveToPoint(-51,7, 1300, {.minSpeed = 90});
+ chassis.moveToPoint(-51,7, 1200, {.minSpeed = 95});
+ chassis.waitUntilDone();
  chassis.moveToPoint(-49, 2, 700, {.forwards = false, .maxSpeed = 60, .minSpeed =40});
  chassis.waitUntilDone();
  intakeLift.set_value(true);
  pros::delay(200);
- chassis.moveToPoint(-51,7, 900, {.minSpeed = 90});
-
-    pros::delay(400);
-    intakeLift.set_value(false);
+ chassis.moveToPoint(-51,7, 900, {.minSpeed = 95});
+chassis.waitUntilDone();
+    
+    
     
     chassis.moveToPoint(-39, -13, 700, {.forwards = false, .earlyExitRange = 10});
-
+    intakeLift.set_value(false);
  
     setAutonState(1);
     chassis.turnToHeading(135, 500, {.earlyExitRange = 10});
