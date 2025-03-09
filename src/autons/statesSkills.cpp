@@ -125,24 +125,24 @@ intake.move(127);
           twoRingChassis.turnToHeading(148, 400);
           twoRingChassis.waitUntilDone();
 
-          moveFL(160, 140, true, true ,true, 85, 800);
+          moveFL(160, 140, true, true ,true, 85, 600);
 
           // chassis.moveToPoint(-18, 46, 1000);
 
-          twoRingChassis.moveToPoint(46, 28, 800, {.forwards = false});
+          twoRingChassis.moveToPoint(46, 26, 600, {.forwards = false});
 
-          twoRingChassis.turnToHeading(180, 450);
+          twoRingChassis.turnToHeading(180, 350);
           twoRingChassis.waitUntilDone();
 
         
           moveF(200, true, true, 75, 1500);
-          pros::delay(400);
+     
           
           
           
-          twoRingChassis.turnToHeading(290, 1000);
+          twoRingChassis.turnToHeading(290, 700);
           twoRingChassis.waitUntilDone();
-                twoRingChassis.moveToPoint(58, -7, 600, {.forwards = false});
+                twoRingChassis.moveToPoint(58, -7, 650, {.forwards = false});
          
           //drop first mogo
           mogo.set_value(false);
@@ -181,9 +181,9 @@ mogoChassis.waitUntilDone();
    */
 intake.move(127);
    twoRingChassis.moveToPoint(-41, 41, 1500, {.forwards=  false, .earlyExitRange = 5});
-   twoRingChassis.turnToHeading(200, 650, {.direction = lemlib::AngularDirection::CW_CLOCKWISE, .earlyExitRange = 5});
+   twoRingChassis.turnToHeading(200, 550, {.direction = lemlib::AngularDirection::CW_CLOCKWISE, .earlyExitRange = 5});
 
-   twoRingChassis.moveToPoint(-45, 15 , 600);
+   twoRingChassis.moveToPoint(-45, 15 , 600, {.earlyExitRange = 6});
 
    twoRingChassis.turnToHeading(180, 250);
    twoRingChassis.waitUntilDone();
