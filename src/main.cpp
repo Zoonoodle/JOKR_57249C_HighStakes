@@ -117,7 +117,7 @@ void autonomous() {
 chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
 
 
-     int autonSelector = 8;  
+     int autonSelector = 9;  
 
     switch (autonSelector) {
         case 0:
@@ -151,6 +151,10 @@ chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
         case 8:
 
             red6SAWP();
+            break;
+        case 9:
+
+            redNeg6();
             break;
 
     }

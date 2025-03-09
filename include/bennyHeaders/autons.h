@@ -13,6 +13,7 @@ void redSawp2();
 void bristolSkills();
 void coenSkills();
 void red6SAWP();
+void redNeg6();
 //tasks
 void sort_red();
 void sort_blue();
