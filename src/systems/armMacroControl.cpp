@@ -25,7 +25,7 @@ const int numOfAutonStates   = 8;
 const int numOfAllianceStates = 2;
 
 int neutralPos     = 0;
-int loadPos        = 11500; 
+int loadPos        = 11100; 
 int preScorePos    = 17000; 
 int scorePos       = 52000; 
 int descoreWallPos = 48000;

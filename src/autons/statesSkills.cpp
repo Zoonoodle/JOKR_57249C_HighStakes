@@ -69,6 +69,7 @@ std::int32_t set_integration_time(20);
          
           // moveFR(1690, 585, false, false, false, 80, 2000);
           twoRingChassis.moveToPoint(37, 54, 1500, {.forwards = false, .maxSpeed = 80, .earlyExitRange = 1});
+          intake.move(0);
           setAutonState(1);
           twoRingChassis.waitUntil(22);
 intake.move(127);
@@ -126,7 +127,7 @@ intake.move(127);
          twoRingChassis.moveToPoint(48, 20, 500, {.earlyExitRange = 5});
          // chassis.moveToPoint(-14, 30, 500, {.earlyExitRange = 5});
           twoRingChassis.turnToHeading(145, 400);
-          twoRingChassis.moveToPoint(55, 6, 800);
+          twoRingChassis.moveToPoint(58, 9, 800);
 
           // moveFL(268, 198, true, true ,true, 85, 600);
 
