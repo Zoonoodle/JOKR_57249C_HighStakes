@@ -87,9 +87,9 @@ intake.move(127);
           currentArmState = 1; 
                   loadActivated   = true; 
                   targetArmState  = LoadStates[1]; 
-                  moveDualFront(127, 127, true,true, true, 80, 1300);
-                  // twoRingChassis.moveToPoint(58, 55, 1000, {.maxSpeed = 80});
-                  // twoRingChassis.waitUntilDone();
+                  // moveDualFront(127, 127, true,true, true, 80, 1300);
+                  twoRingChassis.moveToPoint(58, 55, 1000, {.maxSpeed = 80});
+                  twoRingChassis.waitUntilDone();
          setAutonState(2);
 
           
