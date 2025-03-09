@@ -34,7 +34,7 @@ void red6SAWP() {
         pros::delay(40);
         setAutonState(3);
         //260,340
-        moveDualFront(335, 265, true, true, true, 70, 300);
+        moveDualFront(340, 270, true, true, true, 70, 300);
         
         pros::delay(300);
       
@@ -64,13 +64,11 @@ void red6SAWP() {
         mogo.set_value(false);
         chassis.turnToHeading(20, 300);
         intakeLift.set_value(false);
-        pros::delay(50);
         intake.move(0);
         pros::delay(600);
         intake.move(80);
-        pros::delay(500);
-        intake.move(0);
         chassis.waitUntilDone();
+        intake.move(0);
         chassis.moveToPoint(-30, -26, 1500, {.forwards = false, .maxSpeed = 50});
         chassis.waitUntil(36);
         mogo.set_value(true);
