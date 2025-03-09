@@ -116,7 +116,7 @@ intake.move(127);
                 chassis.turnToHeading(90, 400);
                 pros::delay(350);
                 chassis.waitUntilDone();
-          moveF(445, false, false, 70, 800);
+                twoRingChassis.moveToPoint(48, twoRingChassis.getPose().y, 650, {.forwards = false});
           twoRingChassis.turnToHeading(180, 450);
           setAutonState(0);
          
@@ -124,9 +124,9 @@ intake.move(127);
         
 
         
-         twoRingChassis.moveToPoint(48, 20, 500, {.earlyExitRange = 5});
+         twoRingChassis.moveToPoint(48, 20, 500, {.earlyExitRange = 10});
          // chassis.moveToPoint(-14, 30, 500, {.earlyExitRange = 5});
-          twoRingChassis.turnToHeading(145, 400);
+          twoRingChassis.turnToHeading(145, 400, {.earlyExitRange = 10});
           twoRingChassis.moveToPoint(58, 9, 800);
 
           // moveFL(268, 198, true, true ,true, 85, 600);
@@ -224,10 +224,9 @@ intake.move(127);
   loadActivated   = true; 
   targetArmState  = LoadStates[1]; 
 
-// chassis.moveToPoint(-63.5 , 40, 1200, {.maxSpeed = 80, .earlyExitRange = 1});    
-// chassis.waitUntilDone();
+chassis.moveToPoint(-65 , 40, 1200, {.maxSpeed = 80, .earlyExitRange = 1});    
+chassis.waitUntilDone();
 
-moveDualFront(127, 127, true,true, true, 80, 1000);
          
           setAutonState(2);
           
@@ -316,7 +315,7 @@ doinker.set_value(false);
           setAutonState(1);
 
          //third mogo grab
-          chassis.moveToPoint(-11, 95, 1800, {.forwards = false, .maxSpeed = 55});
+          chassis.moveToPoint(-12, 95, 1600, {.forwards = false, .maxSpeed = 55});
           
           
           chassis.waitUntil(18);
@@ -330,14 +329,14 @@ doinker.set_value(false);
 
           chassis.waitUntilDone();
          intake.move(0);
-          moveF(1705, true, true, 50, 800);
+          moveF(1700, true, true, 50, 800);
            //alliance stake
           mogoChassis.turnToHeading(356, 600);
         
          //  mogoChassis.moveToPoint(-13, 107, 800, {.maxSpeed = 80, .earlyExitRange = 2});
           mogoChassis.waitUntilDone();
          
-          moveF(330, false, false, 65, 700);
+          moveF(320, false, false, 65, 700);
           setAutonState(3);
           pros::delay(450);
           pros::Task sortingTask(sortingControlTask); 
