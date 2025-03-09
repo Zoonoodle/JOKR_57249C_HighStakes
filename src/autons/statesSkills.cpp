@@ -58,7 +58,7 @@ std::int32_t set_integration_time(20);
 
 
           
-           mogoChassis.moveToPoint(55,97 , 1000);
+           mogoChassis.moveToPoint(55,95 , 1000);
            
           //  mogoChassis.waitUntil(24);
           //  intake.move(100);
@@ -88,7 +88,7 @@ intake.move(127);
                   loadActivated   = true; 
                   targetArmState  = LoadStates[1]; 
                   // moveDualFront(127, 127, true,true, true, 80, 1300);
-                  twoRingChassis.moveToPoint(59, 53, 1200, {.maxSpeed = 80});
+                  twoRingChassis.moveToPoint(59, 53 , 1200, {.maxSpeed = 80});
                   twoRingChassis.waitUntilDone();
          setAutonState(2);
 
