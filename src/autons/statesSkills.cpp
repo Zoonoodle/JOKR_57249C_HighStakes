@@ -224,7 +224,7 @@ intake.move(127);
 // chassis.moveToPoint(-63.5 , 40, 1200, {.maxSpeed = 80, .earlyExitRange = 1});    
 // chassis.waitUntilDone();
 
-moveF(double fTarget, bool forwards, bool decreasing, int maxSpeed, int timeOutMs)
+moveDualFront(137, 137, true, bool leftDecreasing, bool rightDecreasing, int maxSpeed, int timeOutMs)
          
           setAutonState(2);
           
