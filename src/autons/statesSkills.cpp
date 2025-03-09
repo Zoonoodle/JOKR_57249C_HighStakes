@@ -27,7 +27,7 @@ std::int32_t set_integration_time(20);
              setAutonState(1);
              pros::delay(300);
              intake.move(127);
-             pros::delay(150);
+             pros::delay(200);
              intake.move(0);
              pros::delay(40);
              setAutonState(3);
@@ -36,7 +36,8 @@ std::int32_t set_integration_time(20);
               setAutonState(3);
               pros::delay(450);
               // chassis.moveToPoint(0, 7, 900, {.forwards = false});
-              moveF(500, false, false, 60, 800); //was 520
+              // moveF(500, false, false, 60, 800); //was 520
+              chassis.moveToPoint(0, 8, 600, {.forwards = false});
               chassis.turnToHeading(269, 650);
                setAutonState(0);
                
@@ -85,8 +86,9 @@ intake.move(127);
           currentArmState = 1; 
                   loadActivated   = true; 
                   targetArmState  = LoadStates[1]; 
-                  twoRingChassis.moveToPoint(58, 55, 1000, {.maxSpeed = 80});
-                  twoRingChassis.waitUntilDone();
+                  moveDualFront(137, 137, true,true, true, 80, 1000);
+                  // twoRingChassis.moveToPoint(58, 55, 1000, {.maxSpeed = 80});
+                  // twoRingChassis.waitUntilDone();
          setAutonState(2);
 
           
@@ -123,10 +125,10 @@ intake.move(127);
         
          twoRingChassis.moveToPoint(48, 20, 500, {.earlyExitRange = 5});
          // chassis.moveToPoint(-14, 30, 500, {.earlyExitRange = 5});
-          twoRingChassis.turnToHeading(148, 400);
+          twoRingChassis.turnToHeading(145, 400);
           twoRingChassis.waitUntilDone();
 
-          moveFL(160, 140, true, true ,true, 85, 600);
+          moveFL(268, 198, true, true ,true, 85, 600);
 
           // chassis.moveToPoint(-18, 46, 1000);
 
@@ -224,7 +226,7 @@ intake.move(127);
 // chassis.moveToPoint(-63.5 , 40, 1200, {.maxSpeed = 80, .earlyExitRange = 1});    
 // chassis.waitUntilDone();
 
-moveDualFront(137, 137, true, bool leftDecreasing, bool rightDecreasing, int maxSpeed, int timeOutMs)
+moveDualFront(137, 137, true,true, true, 80, 1000);
          
           setAutonState(2);
           
