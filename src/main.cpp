@@ -117,12 +117,12 @@ void autonomous() {
 chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
 
 
-     int autonSelector = 9;  
+     int autonSelector = 0;  
 
     switch (autonSelector) {
         case 0:
     
-        bristolSkills();
+        statesSkills();
         break;
 
         case 1:

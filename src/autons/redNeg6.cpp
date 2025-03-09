@@ -65,5 +65,5 @@ chassis.turnToHeading(325, 400);
     pros::delay(200);
     chassis.moveToPoint(51,7, 900, {.minSpeed = 95});
    chassis.waitUntil(4);
-   intakeLift.set_value(false); vb
+   intakeLift.set_value(false); 
 }

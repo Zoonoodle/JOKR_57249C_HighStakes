@@ -10,7 +10,7 @@ void sortingControlTask();
 void blueSawp();
 void redSawp();
 void redSawp2();
-void bristolSkills();
+void statesSkills();
 void coenSkills();
 void red6SAWP();
 void redNeg6();
