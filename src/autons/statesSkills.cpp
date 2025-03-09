@@ -88,7 +88,7 @@ intake.move(127);
                   loadActivated   = true; 
                   targetArmState  = LoadStates[1]; 
                   // moveDualFront(127, 127, true,true, true, 80, 1300);
-                  twoRingChassis.moveToPoint(58, 55, 1000, {.maxSpeed = 80});
+                  twoRingChassis.moveToPoint(59, 55, 1200, {.maxSpeed = 80});
                   twoRingChassis.waitUntilDone();
          setAutonState(2);
 
@@ -99,7 +99,7 @@ intake.move(127);
           
           
 
-          pros::delay(380);
+          pros::delay(400);
           targetArmState = LoadStates[0];
 
             while (armSensor.get_position() > 12000 + 100) {
