@@ -212,17 +212,19 @@ intake.move(127);
             
             twoRingChassis.waitUntilDone();
 
-            chassis.moveToPoint(-44, 41, 1500, {.maxSpeed = 80});
+            chassis.moveToPoint(-44, 41, 1500, {.maxSpeed = 85});
             intake.move(127);
             chassis.waitUntilDone();
-            chassis.turnToHeading(264, 700);
+            chassis.turnToHeading(263, 700);
             
   currentArmState = 1; 
   loadActivated   = true; 
   targetArmState  = LoadStates[1]; 
 
-chassis.moveToPoint(-63.5 , 40, 1200, {.maxSpeed = 80, .earlyExitRange = 1});    
-chassis.waitUntilDone();
+// chassis.moveToPoint(-63.5 , 40, 1200, {.maxSpeed = 80, .earlyExitRange = 1});    
+// chassis.waitUntilDone();
+
+moveF(double fTarget, bool forwards, bool decreasing, int maxSpeed, int timeOutMs)
          
           setAutonState(2);
           
