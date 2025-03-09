@@ -258,14 +258,14 @@ chassis.setBrakeMode(pros::E_MOTOR_BRAKE_BRAKE);
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
       doinker2Activated = !doinker2Activated;
       doinker2.set_value(doinker2Activated);
-    pros::delay(60);
+      pros::delay(20);
     }
 
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
          resetArmPos();
     }
     
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_B)) {
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
     doinkerActivated = !doinkerActivated;
    doinker.set_value(doinkerActivated);
    pros::delay(20);
