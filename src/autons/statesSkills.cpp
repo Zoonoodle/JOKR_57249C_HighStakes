@@ -9,7 +9,7 @@
 #include "bennyHeaders/hardwareAndSensors.h"
 #include <ctime>
 #include <tuple>
-void bristolSkills() {
+void statesSkills() {
 
 
 std::int32_t set_integration_time(20);
@@ -25,11 +25,12 @@ std::int32_t set_integration_time(20);
           twoRingChassis.setPose(0,0, 180);
           mogoChassis.setPose(0,0,180);
              setAutonState(1);
-              pros::delay(450);
-                  intake.move(127);
-              pros::delay(300);
-              intake.move(0);
-              pros::delay(100);
+             pros::delay(300);
+             intake.move(127);
+             pros::delay(150);
+             intake.move(0);
+             pros::delay(40);
+             setAutonState(3);
 
               //backpack onto stake
               setAutonState(3);
@@ -192,7 +193,7 @@ intake.move(127);
             // moveF(300, true, true, 65, 1000);
             // currentIntakeCommand = STOPSECOND;
             
-            moveF(180, true, true, 60, 2000);
+            moveF(185, true, true, 60, 2000);
             
             twoRingChassis.turnToHeading(300, 500);
             twoRingChassis.moveToPoint(-57, 3, 1000);
@@ -237,12 +238,12 @@ chassis.waitUntilDone();
                 pros::delay(150);
               
                 intake.move(127);
-                pros::delay(350); 
+                pros::delay(300); 
                 intake.move(0);
                 
                 setAutonState(2);
                
-                pros::delay(400);
+                pros::delay(350);
                 setAutonState(1);
                 chassis.moveToPoint(-48, 40, 1000, {.forwards = false});
                 chassis.waitUntilDone();
