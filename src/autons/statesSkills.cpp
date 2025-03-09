@@ -330,9 +330,9 @@ doinker.set_value(false);
 
           chassis.waitUntilDone();
          intake.move(0);
-          moveF(1680, true, true, 50, 800);
+          moveF(1660, true, true, 55, 800);
            //alliance stake
-          mogoChassis.turnToHeading(356, 600);
+          mogoChassis.turnToHeading(355, 600);
         
          //  mogoChassis.moveToPoint(-13, 107, 800, {.maxSpeed = 80, .earlyExitRange = 2});
           mogoChassis.waitUntilDone();
