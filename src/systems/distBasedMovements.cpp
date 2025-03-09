@@ -18,7 +18,7 @@ static constexpr double kP_h = 1.0;
 static constexpr double kD_h = 2.0;
 
 // Tolerance for distance error (mm)
-static constexpr double DIST_TOLERANCE = 10.0;
+static constexpr double DIST_TOLERANCE = 4.0;
 
 inline double clamp(double value, double minVal, double maxVal) {
     if (value < minVal) return minVal;
