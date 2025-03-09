@@ -116,7 +116,7 @@ intake.move(127);
                 chassis.turnToHeading(90, 400);
                 pros::delay(350);
                 chassis.waitUntilDone();
-                twoRingChassis.moveToPoint(48, twoRingChassis.getPose().y, 650, {.forwards = false});
+                twoRingChassis.moveToPoint(45, twoRingChassis.getPose().y, 650, {.forwards = false});
           twoRingChassis.turnToHeading(180, 450);
           setAutonState(0);
          
@@ -157,10 +157,10 @@ intake.move(127);
 
           ///////////////// Q2 start
           twoRingChassis.waitUntilDone();
-          chassis.moveToPoint(-2, 1 ,1800);
+          chassis.moveToPoint(-1, 0 ,1800);
           intake.move(0);
           chassis.turnToHeading(91, 550);
-                chassis.moveToPoint(-21, 1.1, 2000, {.forwards = false, .maxSpeed = 50, .earlyExitRange = 3});
+                chassis.moveToPoint(-21, 0, 2000, {.forwards = false, .maxSpeed = 50, .earlyExitRange = 3});
                 chassis.waitUntil(17);
                 mogo.set_value(true);
  
@@ -215,7 +215,7 @@ intake.move(127);
             
             twoRingChassis.waitUntilDone();
 
-            chassis.moveToPoint(-44, 41, 1500, {.maxSpeed = 85});
+            chassis.moveToPoint(-44, 41, 1500, {.maxSpeed = 80});
             intake.move(127);
             chassis.waitUntilDone();
             chassis.turnToHeading(263, 700);
