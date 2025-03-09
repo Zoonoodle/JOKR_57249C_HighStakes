@@ -135,7 +135,7 @@ intake.move(127);
 
           twoRingChassis.moveToPoint(46, 26, 600, {.forwards = false});
 
-          twoRingChassis.turnToHeading(180, 350);
+          twoRingChassis.turnToHeading(178, 400);
           twoRingChassis.waitUntilDone();
 
         
@@ -215,7 +215,7 @@ intake.move(127);
             
             twoRingChassis.waitUntilDone();
 
-            chassis.moveToPoint(-44, 41   , 1500, {.maxSpeed = 80});
+            chassis.moveToPoint(-44, 39   , 1800, {.maxSpeed = 80});
             intake.move(127);
             chassis.waitUntilDone();
             chassis.turnToHeading(263, 700);
@@ -295,17 +295,18 @@ doinker.set_value(false);
           mogo.set_value(false);
           intake.move(-20);
           mogoChassis.waitUntilDone();
-
-          //start of third mogo
-
-
-
           currentArmState = 1; 
           loadActivated   = true; 
           targetArmState  = LoadStates[1];
           intake.move(127);
+          //start of third mogo
+
+
+
+          
           chassis.moveToPoint(-37, 94.5, 1000);
-          pros::delay(210);
+          
+          pros::delay(310);
           
           intake.move(0);
           doinker2.set_value(true);
@@ -329,14 +330,14 @@ doinker.set_value(false);
 
           chassis.waitUntilDone();
          intake.move(0);
-          moveF(1700, true, true, 50, 800);
+          moveF(1680, true, true, 50, 800);
            //alliance stake
           mogoChassis.turnToHeading(356, 600);
         
          //  mogoChassis.moveToPoint(-13, 107, 800, {.maxSpeed = 80, .earlyExitRange = 2});
           mogoChassis.waitUntilDone();
          
-          moveF(320, false, false, 65, 700);
+          moveF(310, false, false, 65, 700);
           setAutonState(3);
           pros::delay(450);
           pros::Task sortingTask(sortingControlTask); 
