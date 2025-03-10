@@ -1,6 +1,6 @@
 #include "bennyHeaders/MonteCarloLocalization.hpp"
 #include "bennyHeaders/hardwareAndSensors.h"
-#include "display/lvgl.h"
+#include "pros/apix.h"  // Correct LVGL include for PROS
 #include <memory>
 #include <vector>
 #include <functional>
@@ -21,20 +21,37 @@ static constexpr double MAX_SENSOR_DISTANCE = 2000.0;
 // The update rate for the MCL system (in milliseconds)
 static constexpr int MCL_UPDATE_INTERVAL_MS = 50;
 
+// Store initial sensor readings for relative measurement
+static double initialLeftReading = 0.0;
+static double initialRightReading = 0.0;
+static double initialFrontLeftReading = 0.0;
+static double initialFrontRightReading = 0.0;
+
+// Initial heading from IMU (for relative heading)
+static double initialHeading = 0.0;
+
 // Forward declaration of the MCL update loop function
 void mclUpdateLoop(void*);
 
 /**
  * @brief Initialize the Monte Carlo Localization system
  * 
- * @param initialX Initial X position in mm
- * @param initialY Initial Y position in mm
- * @param initialTheta Initial orientation in degrees (0-360)
- * @param useStandardField Whether to set up standard VEX field walls
+ * Sets up the MCL system with the robot's current position as (0,0,initial_heading)
+ * All subsequent measurements will be relative to this starting position
+ * 
+ * @param initialHeadingDeg Initial heading in degrees (0-360)
  * @param particleCount Number of particles to use (default: 500)
  */
-void initializeMCL(double initialX, double initialY, double initialTheta, 
-                  bool useStandardField = true, int particleCount = 500) {
+void initializeMCL(double initialHeadingDeg = 0.0, int particleCount = 500) {
+    // Store initial sensor readings for relative measurement
+    initialFrontLeftReading = frontDistLeft.get();
+    initialFrontRightReading = frontDistRight.get();
+    initialLeftReading = leftDist.get();
+    initialRightReading = rightDist.get();
+    
+    // Store initial heading (for relative orientation)
+    initialHeading = imu.get_heading();
+    
     // Create new MCL instance if not already created
     if (!mcl) {
         // Create MCL instance with references to sensors
@@ -45,35 +62,61 @@ void initializeMCL(double initialX, double initialY, double initialTheta,
             rightDist,           // Right distance sensor
             leftDist,            // Left distance sensor
             imu,                 // IMU sensor for heading
-            particleCount        // Number of particles
+            particleCount,       // Number of particles
+            initialFrontLeftReading,   // Initial front left reading
+            initialFrontRightReading,  // Initial front right reading 
+            initialLeftReading,        // Initial left reading
+            initialRightReading,       // Initial right reading
+            initialHeading             // Initial heading
         );
         
         // Create visualizer
         mclVisualizer = std::make_unique<MCLVisualizer>(*mcl);
     }
     
-    // Initialize particles around the initial position
+    // Initialize particles at (0,0,initialHeadingDeg)
     mcl->initialize(
-        initialX,
-        initialY,
-        initialTheta * DEG_TO_RAD, // Convert degrees to radians
-        50.0,  // Initial X spread
-        50.0,  // Initial Y spread
-        0.1    // Initial angle spread (radians)
+        0.0,  // X = 0
+        0.0,  // Y = 0
+        initialHeadingDeg * DEG_TO_RAD, // Initial heading in radians
+        10.0,  // Initial X spread
+        10.0,  // Initial Y spread
+        0.05   // Initial angle spread (radians)
     );
     
-    // Set up the field walls if requested
-    if (useStandardField) {
-        mcl->setupStandardField();
+    // Set relative walls based on initial distance readings
+    // We're making walls at the estimated positions relative to our (0,0)
+    // Note: These are approximate and assume walls are perpendicular
+    
+    // Right wall (if detected)
+    if (initialRightReading < MAX_SENSOR_DISTANCE) {
+        mcl->addWall(0, -initialRightReading, 2000, -initialRightReading);
     }
     
-    // Set appropriate noise model parameters based on IMU presence
-    // Lower rotation noise since IMU provides better rotational accuracy
+    // Left wall (if detected)
+    if (initialLeftReading < MAX_SENSOR_DISTANCE) {
+        mcl->addWall(0, initialLeftReading, 2000, initialLeftReading);
+    }
+    
+    // Front wall (if detected)
+    if (initialFrontLeftReading < MAX_SENSOR_DISTANCE || 
+        initialFrontRightReading < MAX_SENSOR_DISTANCE) {
+        // Use the average of both readings if available
+        double avgFrontDist = (initialFrontLeftReading < MAX_SENSOR_DISTANCE && 
+                              initialFrontRightReading < MAX_SENSOR_DISTANCE) ?
+                              (initialFrontLeftReading + initialFrontRightReading) / 2.0 :
+                              (initialFrontLeftReading < MAX_SENSOR_DISTANCE ? 
+                               initialFrontLeftReading : initialFrontRightReading);
+                               
+        mcl->addWall(-initialLeftReading, avgFrontDist, initialRightReading, avgFrontDist);
+    }
+    
+    // Set appropriate noise model parameters
     mcl->setMotionModelParams(
-        0.1,  // Alpha1: Translation noise from translation (higher = more noise)
-        0.05, // Alpha2: Translation noise from rotation (reduced with IMU)
-        0.05, // Alpha3: Rotation noise from translation (reduced with IMU)
-        0.05  // Alpha4: Rotation noise from rotation (reduced with IMU)
+        0.1,  // Alpha1: Translation noise from translation
+        0.05, // Alpha2: Translation noise from rotation
+        0.05, // Alpha3: Rotation noise from translation
+        0.05  // Alpha4: Rotation noise from rotation
     );
     
     // Set sensor model parameters
@@ -81,6 +124,9 @@ void initializeMCL(double initialX, double initialY, double initialTheta,
         50.0,              // Standard deviation of sensor noise (mm)
         MAX_SENSOR_DISTANCE // Maximum reliable sensor distance (mm)
     );
+    
+    // Reset odometry to match our relative coordinate system
+    chassis.setPose(0, 0, initialHeadingDeg);
     
     // Create the update task if not already running
     if (!mclRunning) {
@@ -93,12 +139,14 @@ void initializeMCL(double initialX, double initialY, double initialTheta,
 }
 
 /**
- * @brief Add a custom wall to the field simulation
+ * @brief Add a custom wall to the relative coordinate system
  * 
- * @param x1 Start X coordinate (mm)
- * @param y1 Start Y coordinate (mm)
- * @param x2 End X coordinate (mm)
- * @param y2 End Y coordinate (mm)
+ * Wall coordinates are relative to the robot's starting position
+ * 
+ * @param x1 Start X coordinate relative to start position (mm)
+ * @param y1 Start Y coordinate relative to start position (mm)
+ * @param x2 End X coordinate relative to start position (mm)
+ * @param y2 End Y coordinate relative to start position (mm)
  */
 void addMCLWall(double x1, double y1, double x2, double y2) {
     if (mcl) {
@@ -107,9 +155,9 @@ void addMCLWall(double x1, double y1, double x2, double y2) {
 }
 
 /**
- * @brief Get the current best estimate of the robot's position
+ * @brief Get the current position estimate relative to starting position
  * 
- * @return lemlib::Pose The estimated pose (x, y, theta)
+ * @return lemlib::Pose The estimated pose (x, y, theta) relative to start
  */
 lemlib::Pose getMCLPose() {
     if (mcl) {
@@ -122,12 +170,11 @@ lemlib::Pose getMCLPose() {
 /**
  * @brief Override the current MCL position estimate
  * 
- * Use this when you have definitive knowledge of the robot's position
- * (e.g., at the start of autonomous)
+ * Sets the robot's current position in the relative coordinate system
  * 
- * @param x X position in mm
- * @param y Y position in mm
- * @param theta Orientation in degrees
+ * @param x X position relative to start (mm)
+ * @param y Y position relative to start (mm)
+ * @param theta Orientation in degrees relative to initial heading
  */
 void setMCLPosition(double x, double y, double theta) {
     if (mcl) {
@@ -177,7 +224,9 @@ void handleMCLTouch() {
 /**
  * @brief Simulate an autonomous path with the MCL system
  * 
- * @param waypoints Vector of waypoints (x, y, theta) defining the path
+ * Path waypoints are relative to the robot's starting position
+ * 
+ * @param waypoints Vector of waypoints (x, y, theta) relative to start position
  */
 void simulateMCLPath(const std::vector<lemlib::Pose>& waypoints) {
     if (mcl && !waypoints.empty()) {
@@ -226,9 +275,9 @@ void mclUpdateLoop(void*) {
 /**
  * @brief Create and simulate a path from the current position to a target position
  * 
- * @param targetX Target X position in mm
- * @param targetY Target Y position in mm
- * @param targetTheta Target orientation in degrees
+ * @param targetX Target X position relative to start (mm)
+ * @param targetY Target Y position relative to start (mm)
+ * @param targetTheta Target orientation in degrees relative to initial heading
  * @param numWaypoints Number of waypoints to generate along the path
  */
 void simulatePathToTarget(double targetX, double targetY, double targetTheta, int numWaypoints = 5) {
@@ -264,23 +313,21 @@ void simulatePathToTarget(double targetX, double targetY, double targetTheta, in
 /**
  * @brief Function to be called from autonomous init to set up MCL
  * 
- * @param initialX Initial X position in mm
- * @param initialY Initial Y position in mm
- * @param initialTheta Initial orientation in degrees
+ * @param initialHeadingDeg Initial heading in degrees
  */
-void setupMCLForAutonomous(double initialX, double initialY, double initialTheta) {
-    // Initialize MCL system with standard field
-    initializeMCL(initialX, initialY, initialTheta);
+void setupMCLForAutonomous(double initialHeadingDeg = 0.0) {
+    // Initialize MCL system with the current position as (0,0)
+    initializeMCL(initialHeadingDeg);
     
-    // Update the odometry position to match the MCL position
-    chassis.setPose(initialX, initialY, initialTheta);
+    // Update the odometry position to match our relative coordinate system
+    chassis.setPose(0, 0, initialHeadingDeg);
 }
 
 /**
  * @brief Get a fused position estimate from MCL and odometry
  * 
  * @param mclWeight Weight to give to MCL estimate (0.0 to 1.0)
- * @return lemlib::Pose Fused position estimate
+ * @return lemlib::Pose Fused position estimate relative to start position
  */
 lemlib::Pose getFusedPosition(double mclWeight = 0.7) {
     if (!mcl) {
