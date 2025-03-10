@@ -29,6 +29,11 @@ MonteCarloLocalization::MonteCarloLocalization(
     pros::Distance& leftDist,
     pros::Imu& imu,
     int numParticles,
+    double initialFrontLeftReading,
+    double initialFrontRightReading,
+    double initialLeftReading,
+    double initialRightReading,
+    double initialHeading,
     double fieldWidth,
     double fieldHeight
 ) : m_chassis(chassis),
@@ -37,6 +42,11 @@ MonteCarloLocalization::MonteCarloLocalization(
     m_rightDist(rightDist),
     m_leftDist(leftDist),
     m_imu(imu),
+    m_initialFrontLeftReading(initialFrontLeftReading),
+    m_initialFrontRightReading(initialFrontRightReading),
+    m_initialLeftReading(initialLeftReading),
+    m_initialRightReading(initialRightReading),
+    m_initialImuHeading(initialHeading * DEG_TO_RAD),
     m_fieldWidth(fieldWidth),
     m_fieldHeight(fieldHeight),
     m_rng(std::chrono::system_clock::now().time_since_epoch().count())
@@ -85,19 +95,26 @@ void MonteCarloLocalization::addWall(double x1, double y1, double x2, double y2)
     m_walls.emplace_back(x1, y1, x2, y2);
 }
 
-// Set up standard VEX field walls
+// Set up standard VEX field walls relative to the robot's starting position
 void MonteCarloLocalization::setupStandardField() {
     // Clear existing walls
     m_walls.clear();
     
-    // Add outer perimeter walls of a standard VEX field (12x12 feet = 3658x3658 mm)
-    double fieldSize = 3658; // 12 feet in mm
+    // Create walls based on initial sensor readings
+    // This is a simplified approximation that assumes the robot is somewhat
+    // parallel to the field walls
     
-    // Outer walls
-    addWall(0, 0, fieldSize, 0);           // Bottom wall
-    addWall(fieldSize, 0, fieldSize, fieldSize);  // Right wall
-    addWall(fieldSize, fieldSize, 0, fieldSize);  // Top wall
-    addWall(0, fieldSize, 0, 0);           // Left wall
+    // Estimated field boundaries (relative to robot's starting position)
+    double fieldLeft = -m_initialLeftReading;
+    double fieldRight = m_initialRightReading;
+    double fieldFront = (m_initialFrontLeftReading + m_initialFrontRightReading) / 2.0;
+    double fieldBack = -1000; // Arbitrary back wall distance
+    
+    // Add outer perimeter walls (all coordinates relative to robot start position)
+    addWall(fieldLeft, fieldBack, fieldRight, fieldBack);  // Back wall
+    addWall(fieldRight, fieldBack, fieldRight, fieldFront); // Right wall
+    addWall(fieldRight, fieldFront, fieldLeft, fieldFront); // Front wall
+    addWall(fieldLeft, fieldFront, fieldLeft, fieldBack);   // Left wall
 }
 
 // Update the particle filter
@@ -141,6 +158,12 @@ lemlib::Pose MonteCarloLocalization::getEstimatedPose() const {
         bestParticle->y,
         normalizeAngle(bestParticle->theta) * RAD_TO_DEG
     );
+}
+
+// Get relative distance measurement (current vs initial)
+double MonteCarloLocalization::getRelativeDistance(double currentReading, double initialReading) const {
+    // Calculate relative distance (positive = closer than initial, negative = farther than initial)
+    return initialReading - currentReading;
 }
 
 // Simulate distance sensor readings at a given position
@@ -293,9 +316,11 @@ void MonteCarloLocalization::setPosition(double x, double y, double theta) {
 void MonteCarloLocalization::motionUpdate(double deltaX, double deltaY, double deltaTheta) {
     // Get current IMU heading in radians
     double imuHeading = m_imu.get_heading() * DEG_TO_RAD;
+    // Convert to relative heading (relative to initial heading)
+    double relativeImuHeading = normalizeAngle(imuHeading - m_initialImuHeading);
     
     // Calculate heading change from IMU
-    double imuDeltaTheta = normalizeAngle(imuHeading - m_prevImuHeading);
+    double imuDeltaTheta = normalizeAngle(relativeImuHeading - m_prevImuHeading);
     
     // If IMU delta is valid (not a huge jump due to reset), use it instead of odometry
     if (std::abs(imuDeltaTheta) < PI / 2) {
@@ -339,8 +364,14 @@ void MonteCarloLocalization::sensorUpdate() {
     double rightReading = m_rightDist.get();
     double leftReading = m_leftDist.get();
     
-    // Get IMU heading for measurement update
-    double imuHeading = m_imu.get_heading() * DEG_TO_RAD;
+    // Convert to relative readings (positive = closer than initial, negative = farther)
+    double relFrontLeftReading = getRelativeDistance(frontLeftReading, m_initialFrontLeftReading);
+    double relFrontRightReading = getRelativeDistance(frontRightReading, m_initialFrontRightReading);
+    double relRightReading = getRelativeDistance(rightReading, m_initialRightReading);
+    double relLeftReading = getRelativeDistance(leftReading, m_initialLeftReading);
+    
+    // Get IMU heading for measurement update (relative to initial heading)
+    double imuHeading = normalizeAngle(m_imu.get_heading() * DEG_TO_RAD - m_initialImuHeading);
     
     // Define sensor angles relative to robot heading
     // Assuming front sensors are angled slightly outward (adjust based on your robot)
@@ -348,9 +379,6 @@ void MonteCarloLocalization::sensorUpdate() {
     const double frontRightAngle = PI/8;  // 22.5 degrees
     const double rightAngle = PI/2;       // 90 degrees
     const double leftAngle = -PI/2;       // -90 degrees
-    
-    // Create normal distribution for measurement likelihood
-    std::normal_distribution<double> measurementDist(0.0, m_sensorStdDev);
     
     // Update weights of all particles
     for (auto& particle : m_particles) {
@@ -364,31 +392,31 @@ void MonteCarloLocalization::sensorUpdate() {
         double simLeftReading = simulateDistanceSensor(
             particle.x, particle.y, particle.theta, leftAngle);
         
-        // Calculate the likelihood of the real readings given the simulated ones
+        // Calculate likelihoods based on the difference between simulated and real RELATIVE readings
         double frontLeftLikelihood = 1.0;
         double frontRightLikelihood = 1.0;
         double rightLikelihood = 1.0;
         double leftLikelihood = 1.0;
         
         // Only use readings within valid range
-        if (frontLeftReading <= m_maxSensorDistance) {
-            double error = frontLeftReading - simFrontLeftReading;
-            // Use Gaussian probability density function
+        if (frontLeftReading <= m_maxSensorDistance && simFrontLeftReading <= m_maxSensorDistance) {
+            // Compare relative values (how much the reading has changed from initial)
+            double error = relFrontLeftReading - (m_initialFrontLeftReading - simFrontLeftReading);
             frontLeftLikelihood = std::exp(-(error*error) / (2 * m_sensorStdDev * m_sensorStdDev));
         }
         
-        if (frontRightReading <= m_maxSensorDistance) {
-            double error = frontRightReading - simFrontRightReading;
+        if (frontRightReading <= m_maxSensorDistance && simFrontRightReading <= m_maxSensorDistance) {
+            double error = relFrontRightReading - (m_initialFrontRightReading - simFrontRightReading);
             frontRightLikelihood = std::exp(-(error*error) / (2 * m_sensorStdDev * m_sensorStdDev));
         }
         
-        if (rightReading <= m_maxSensorDistance) {
-            double error = rightReading - simRightReading;
+        if (rightReading <= m_maxSensorDistance && simRightReading <= m_maxSensorDistance) {
+            double error = relRightReading - (m_initialRightReading - simRightReading);
             rightLikelihood = std::exp(-(error*error) / (2 * m_sensorStdDev * m_sensorStdDev));
         }
         
-        if (leftReading <= m_maxSensorDistance) {
-            double error = leftReading - simLeftReading;
+        if (leftReading <= m_maxSensorDistance && simLeftReading <= m_maxSensorDistance) {
+            double error = relLeftReading - (m_initialLeftReading - simLeftReading);
             leftLikelihood = std::exp(-(error*error) / (2 * m_sensorStdDev * m_sensorStdDev));
         }
         
@@ -639,13 +667,13 @@ void MCLVisualizer::handleTouch() {
                 m_simulating = true;
                 display();
                 
-                // Set up a simple path to simulate
+                // Set up a simple path to simulate around the starting point
                 std::vector<lemlib::Pose> path;
-                path.push_back(lemlib::Pose(200, 200, 0));
-                path.push_back(lemlib::Pose(1000, 200, 90));
-                path.push_back(lemlib::Pose(1000, 1000, 180));
-                path.push_back(lemlib::Pose(200, 1000, 270));
-                path.push_back(lemlib::Pose(200, 200, 0));
+                path.push_back(lemlib::Pose(0, 0, 0));         // Start position
+                path.push_back(lemlib::Pose(300, 0, 90));      // Forward then turn
+                path.push_back(lemlib::Pose(300, 300, 180));   // Right then turn
+                path.push_back(lemlib::Pose(0, 300, 270));     // Back then turn
+                path.push_back(lemlib::Pose(0, 0, 0));         // Left then return to start
                 
                 // Run simulation with visualization callback
                 m_mcl.simulateAutonomousPath(path, [this](const lemlib::Pose& pose, const std::vector<MonteCarloLocalization::Particle>& particles) {
@@ -663,8 +691,12 @@ void MCLVisualizer::handleTouch() {
 }
 
 void MCLVisualizer::drawParticle(const MonteCarloLocalization::Particle& particle, uint32_t color, int size) {
-    int x = static_cast<int>(particle.x * m_scale);
-    int y = static_cast<int>(480 - particle.y * m_scale); // Y is inverted in screen coordinates
+    // Center the display on (0,0) which is the robot's starting position
+    const int centerX = 240;
+    const int centerY = 240;
+    
+    int x = centerX + static_cast<int>(particle.x * m_scale);
+    int y = centerY - static_cast<int>(particle.y * m_scale); // Y is inverted in screen coordinates
     
     lv_obj_t* point = lv_obj_create(lv_scr_act(), NULL);
     lv_obj_set_size(point, size, size);
@@ -674,10 +706,14 @@ void MCLVisualizer::drawParticle(const MonteCarloLocalization::Particle& particl
 }
 
 void MCLVisualizer::drawWall(const MonteCarloLocalization::Wall& wall, uint32_t color) {
-    int x1 = static_cast<int>(wall.x1 * m_scale);
-    int y1 = static_cast<int>(480 - wall.y1 * m_scale); // Y is inverted
-    int x2 = static_cast<int>(wall.x2 * m_scale);
-    int y2 = static_cast<int>(480 - wall.y2 * m_scale); // Y is inverted
+    // Center the display on (0,0) which is the robot's starting position
+    const int centerX = 240;
+    const int centerY = 240;
+    
+    int x1 = centerX + static_cast<int>(wall.x1 * m_scale);
+    int y1 = centerY - static_cast<int>(wall.y1 * m_scale); // Y is inverted
+    int x2 = centerX + static_cast<int>(wall.x2 * m_scale);
+    int y2 = centerY - static_cast<int>(wall.y2 * m_scale); // Y is inverted
     
     lv_point_t points[] = {{x1, y1}, {x2, y2}};
     
@@ -689,8 +725,12 @@ void MCLVisualizer::drawWall(const MonteCarloLocalization::Wall& wall, uint32_t 
 }
 
 void MCLVisualizer::drawRobot(const lemlib::Pose& pose, uint32_t color) {
-    int x = static_cast<int>(pose.x * m_scale);
-    int y = static_cast<int>(480 - pose.y * m_scale); // Y is inverted
+    // Center the display on (0,0) which is the robot's starting position
+    const int centerX = 240;
+    const int centerY = 240;
+    
+    int x = centerX + static_cast<int>(pose.x * m_scale);
+    int y = centerY - static_cast<int>(pose.y * m_scale); // Y is inverted
     double theta = pose.theta * DEG_TO_RAD;
     
     // Robot body (a circle)
