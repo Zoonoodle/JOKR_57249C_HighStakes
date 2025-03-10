@@ -14,6 +14,8 @@
  * 
  * This class implements a particle filter that fuses odometry and distance sensor data
  * to achieve more accurate localization during autonomous routines.
+ * 
+ * The coordinate system is relative to the robot's starting position (0,0).
  */
 class MonteCarloLocalization {
 public:
@@ -21,9 +23,9 @@ public:
      * @brief Struct representing a single particle (possible robot position and orientation)
      */
     struct Particle {
-        double x;           // X position in mm
-        double y;           // Y position in mm
-        double theta;       // Orientation in radians
+        double x;           // X position in mm (relative to start)
+        double y;           // Y position in mm (relative to start)
+        double theta;       // Orientation in radians (relative to initial heading)
         double weight;      // Particle weight (likelihood)
         
         Particle(double x, double y, double theta, double weight = 1.0)
@@ -34,8 +36,8 @@ public:
      * @brief Struct representing field walls for simulation
      */
     struct Wall {
-        double x1, y1;      // Start point
-        double x2, y2;      // End point
+        double x1, y1;      // Start point (relative to starting position)
+        double x2, y2;      // End point (relative to starting position)
         
         Wall(double x1, double y1, double x2, double y2)
             : x1(x1), y1(y1), x2(x2), y2(y2) {}
@@ -51,6 +53,11 @@ public:
      * @param leftDist Left distance sensor
      * @param imu IMU sensor for accurate heading information
      * @param numParticles Number of particles to use (default: 500)
+     * @param initialFrontLeftReading Initial front left sensor reading for relative measurements
+     * @param initialFrontRightReading Initial front right sensor reading for relative measurements
+     * @param initialLeftReading Initial left sensor reading for relative measurements
+     * @param initialRightReading Initial right sensor reading for relative measurements
+     * @param initialHeading Initial IMU heading for relative measurements
      * @param fieldWidth Field width in mm (default: 3658 mm = 12 feet)
      * @param fieldHeight Field height in mm (default: 3658 mm = 12 feet)
      */
@@ -62,6 +69,11 @@ public:
         pros::Distance& leftDist,
         pros::Imu& imu,
         int numParticles = 500,
+        double initialFrontLeftReading = 0.0,
+        double initialFrontRightReading = 0.0,
+        double initialLeftReading = 0.0,
+        double initialRightReading = 0.0,
+        double initialHeading = 0.0,
         double fieldWidth = 3658.0,
         double fieldHeight = 3658.0
     );
@@ -69,9 +81,9 @@ public:
     /**
      * @brief Initialize the particle filter
      * 
-     * @param initialX Initial X position in mm
-     * @param initialY Initial Y position in mm 
-     * @param initialTheta Initial orientation in radians
+     * @param initialX Initial X position in mm (relative to start)
+     * @param initialY Initial Y position in mm (relative to start)
+     * @param initialTheta Initial orientation in radians (relative to start)
      * @param spreadX Standard deviation for X position uncertainty
      * @param spreadY Standard deviation for Y position uncertainty
      * @param spreadTheta Standard deviation for orientation uncertainty
@@ -88,10 +100,12 @@ public:
     /**
      * @brief Add a wall to the field simulation
      * 
-     * @param x1 Start X coordinate
-     * @param y1 Start Y coordinate
-     * @param x2 End X coordinate
-     * @param y2 End Y coordinate
+     * Wall coordinates are relative to the robot's starting position
+     * 
+     * @param x1 Start X coordinate (relative to start)
+     * @param y1 Start Y coordinate (relative to start)
+     * @param x2 End X coordinate (relative to start)
+     * @param y2 End Y coordinate (relative to start)
      */
     void addWall(double x1, double y1, double x2, double y2);
     
@@ -99,6 +113,7 @@ public:
      * @brief Set up standard VEX field walls
      * 
      * This adds the outer perimeter walls of a standard VEX field
+     * Walls are positioned relative to the robot's starting position
      */
     void setupStandardField();
     
@@ -112,16 +127,16 @@ public:
     /**
      * @brief Get the current best estimate of the robot's position
      * 
-     * @return lemlib::Pose The estimated pose (x, y, theta)
+     * @return lemlib::Pose The estimated pose (x, y, theta) relative to start
      */
     lemlib::Pose getEstimatedPose() const;
     
     /**
      * @brief Simulate distance sensor readings at a given position
      * 
-     * @param x X position in mm
-     * @param y Y position in mm
-     * @param theta Orientation in radians
+     * @param x X position in mm (relative to start)
+     * @param y Y position in mm (relative to start)
+     * @param theta Orientation in radians (relative to initial heading)
      * @param sensorAngle Angle of the sensor relative to robot heading (radians)
      * @param maxDistance Maximum sensing distance (mm)
      * @return double Simulated distance reading (mm)
@@ -137,7 +152,7 @@ public:
     /**
      * @brief Run a complete simulation of an autonomous path for training
      * 
-     * @param path Vector of waypoints (x, y, theta) to follow
+     * @param path Vector of waypoints (x, y, theta) to follow (relative to start)
      * @param updateCallback Callback function called after each simulation step
      */
     void simulateAutonomousPath(
@@ -185,12 +200,9 @@ public:
     /**
      * @brief Manually override the current position estimate
      * 
-     * Use this when you have definitive knowledge of the robot's position
-     * (e.g., at the start of autonomous)
-     * 
-     * @param x X position in mm
-     * @param y Y position in mm
-     * @param theta Orientation in radians
+     * @param x X position in mm (relative to start)
+     * @param y Y position in mm (relative to start)
+     * @param theta Orientation in radians (relative to initial heading)
      */
     void setPosition(double x, double y, double theta);
     
@@ -221,9 +233,16 @@ private:
     double m_sensorStdDev = 50.0;        // Standard deviation of sensor noise (mm)
     double m_maxSensorDistance = 2000.0; // Maximum reliable sensor distance (mm)
     
+    // Initial sensor readings for relative measurements
+    double m_initialFrontLeftReading;
+    double m_initialFrontRightReading;
+    double m_initialLeftReading;
+    double m_initialRightReading;
+    
     // Previous odometry readings for motion update
     lemlib::Pose m_prevOdomPose;
     double m_prevImuHeading = 0.0;  // Previous IMU heading in radians
+    double m_initialImuHeading = 0.0; // Initial IMU heading for relative heading
     
     // Random number generators
     mutable std::mt19937 m_rng;
@@ -297,6 +316,15 @@ private:
      * @return double Value with added noise
      */
     double addNoise(double value, double stdDev) const;
+    
+    /**
+     * @brief Get relative distance from a sensor (relative to initial reading)
+     * 
+     * @param currentReading Current sensor reading
+     * @param initialReading Initial sensor reading
+     * @return double Relative distance (positive if closer than initial)
+     */
+    double getRelativeDistance(double currentReading, double initialReading) const;
 };
 
 /**
