@@ -157,7 +157,7 @@ intake.move(127);
 
           ///////////////// Q2 start
           twoRingChassis.waitUntilDone();
-          chassis.moveToPoint(-1, 0 ,1800);
+          chassis.moveToPoint(-1, 0 ,1800, {.earlyExitRange = 1});
           intake.move(0);
           chassis.turnToHeading(91, 550);
                 chassis.moveToPoint(-21, 0, 2000, {.forwards = false, .maxSpeed = 50, .earlyExitRange = 3});
@@ -172,7 +172,7 @@ intake.move(127);
       intake.move(127);
    mogoChassis.moveToPoint(-54, 74, 700, {.maxSpeed = 100, .earlyExitRange = 5});
 intake.move(127);
-mogoChassis.moveToPoint(-62, 87, 1100);
+mogoChassis.moveToPoint(-63, 85, 1000);
 intake.move(127);
 mogoChassis.waitUntilDone();
 
@@ -215,7 +215,7 @@ intake.move(127);
             
             twoRingChassis.waitUntilDone();
 
-            chassis.moveToPoint(-44, 39   , 1800, {.maxSpeed = 80});
+            chassis.moveToPoint(-44, 41, 1800, {.maxSpeed = 80});
             intake.move(127);
             chassis.waitUntilDone();
             chassis.turnToHeading(263, 700);
@@ -330,14 +330,14 @@ doinker.set_value(false);
 
           chassis.waitUntilDone();
          intake.move(0);
-          moveF(1660, true, true, 55 , 800);
+          moveF(1620, true, true, 65 , 800);
            //alliance stake
           mogoChassis.turnToHeading(355, 600);
         
          //  mogoChassis.moveToPoint(-13, 107, 800, {.maxSpeed = 80, .earlyExitRange = 2});
           mogoChassis.waitUntilDone();
          
-          moveF(310, false, false, 65, 700);
+          moveF(300, false, false, 65, 700);
           setAutonState(3);
           pros::delay(450);
           pros::Task sortingTask(sortingControlTask); 
